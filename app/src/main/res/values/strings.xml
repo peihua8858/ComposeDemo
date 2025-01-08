@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">ComposeDemo</string>
+    <string name="contacts_network_error">网络好像出了点问题，请检查网络</string>
+    <string name="text_no_more">没有更多了～</string>
+    <string name="text_load_fail">加载失败，<font color="#0091FF">点击重试</font></string>
+    <string name="text_load_no_network">加载失败，请检查网络~</string>
+    <string name="text_more">更多</string>
+    <string name="text_retry">重试</string>
+    <string name="text_get_data_failure">抱歉，获取数据失败</string>
+    <string name="text_no_data_found">没有找到数据</string>
+
+    <string name="cptr_pull_to_refresh">下拉刷新</string>
+    <string name="cptr_release_to_refresh">松开刷新</string>
+    <string name="cptr_refreshing">刷新中…</string>
+
+    <string name="cptr_pull_to_load">上拉加载</string>
+    <string name="cptr_release_to_load">松开加载更多</string>
+    <string name="cptr_loading">加载中…</string>
+    <string name="text_config">确定</string>
+    <string name="text_cancel">取消</string>
+
+</resources>

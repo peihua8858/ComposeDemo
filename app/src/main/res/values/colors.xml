@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="white_50">#80FFFFFF</color>
+    <!-- 不透明度100% -->
+    <color name="color_1f1f1f">#1F1F1F</color>
+    <color name="color_1f1f1f_10">#111f1f1f</color>
+    <color name="color_1f1f1f_18">#2d1f1f1f</color>
+    <color name="color_1f1f1f_20">#321f1f1f</color>
+    <color name="color_1f1f1f_25">#3f1f1f1f</color>
+    <color name="color_1f1f1f_50">#7f1f1f1f</color>
+    <color name="color_1f1f1f_42">#6b1f1f1f</color>
+    <color name="color_1f1f1f_70">#b31F1F1F</color>
+    <color name="color_1f1f1f_72">#b71f1f1f</color>
+
+    <color name="_6200EE">#6200EE</color>
+    <color name="white_80">#80FFFFFF</color>
+    <color name="white_70">#b3FFFFFF</color>
+    <color name="color_000000_15">#26000000</color>
+    <color name="color_000000_70">#b3000000</color>
+    <color name="color_000000_50">#7f000000</color>
+
+    <color name="color_FF6278">#FF6278</color>
+    <color name="color_E93592">#E93592</color>
+    <color name="color_4F78FF">#4F78FF</color>
+    <color name="color_D8D8D8">#D8D8D8</color>
+    <color name="color_D4AF21">#D4AF21</color>
+
+    <!-- 不透明度50% rgba(31,31,31,0.5)-->
+    <color name="color_801f1f1f">#801F1F1F</color>
+    <!-- 不透明度72% rgba(31,31,31,0.72)-->
+    <color name="white_72">#b8FFFFFF</color>
+    <!--    不透明度20% rgba(31,31,31,0.2)-->
+    <color name="color_cc1f1f1f">#331F1F1F</color>
+    <!--    不透明度50% rgba(00,00,00,0.5)-->
+    <color name="color_black_50">#80000000</color>
+    <!-- 不透明度72% rgba(00,00,00,0.72)-->
+    <color name="black_72">#b8000000</color>
+    <color name="cursor_color">#FF4F78FF</color>
+    <!-- scrollbar thumb color -->
+    <color name="thumb_color">#7f8F8F8F</color>
+    <color name="light_blue_50">#FFE1F5FE</color>
+    <color name="light_blue_200">#FF81D4FA</color>
+    <color name="light_blue_600">#FF039BE5</color>
+    <color name="light_blue_900">#FF01579B</color>
+</resources>

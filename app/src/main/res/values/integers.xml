@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="default_anim_duration">500</integer>
+    <integer name="default_anim_step">1</integer>
+    <integer name="default_start_angle">-90</integer>
+    <item name="tag_multi_state_view" type="id" />
+</resources>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.ComposeUi" parent="android:Theme.Material.Light.NoActionBar" >
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+    <style name="Theme.Transparent" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowDisablePreview">true</item>
+    </style>
+    <style name="FontNotoSansSc400">
+        <item name="android:fontWeight">400</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:fontFamily">noto-sans-sc</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="FontNotoSansSc500">
+        <item name="android:fontWeight">500</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:fontFamily">noto-sans-sc</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+</resources>
