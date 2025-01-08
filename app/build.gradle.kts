@@ -100,5 +100,5 @@ dependencies {
     implementation(libs.gson)
 //    implementation("androidx.paging:paging-runtime:3.3.5")
     implementation("androidx.paging:paging-compose:3.3.5")
-    implementation("androidx.paging:paging-compose:1.0.0-alpha15")
+//    implementation("androidx.paging:paging-compose:1.0.0-alpha15")
 }

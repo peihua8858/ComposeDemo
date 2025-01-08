@@ -1,6 +1,8 @@
 package com.android.composedemo
 
 import android.os.Bundle
+import android.os.Parcel
+import android.os.Parcelable
 import androidx.activity.viewModels
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.VectorConverter
@@ -14,8 +16,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -70,31 +72,7 @@ class PullToRefreshByPagerActivity : BaseActivity() {
             } else if (items.loadState.refresh is LoadState.Error) {
                 ErrorView(Modifier)
             }
-            LazyColumn(modifier = modifier.fillMaxSize()) {
-                itemsIndexed(items.itemSnapshotList, key = {_,item->item.hashCode()}) { index, message ->
-                    val itemData = message?.data as? ModuleBean ?: return@itemsIndexed
-                    when (message.itemType) {
-                        Constants.TYPE_TITLE -> {
-                            TitleItemView(module = itemData)
-                        }
-
-                        Constants.TYPE_ITEM -> {
-                            HomeItemView(module = itemData)
-                        }
-
-                        Constants.TYPE_BANNER -> {
-                            BannerView(module = itemData)
-                        }
-
-                        Constants.TYPE_AI_BANNER -> {
-                            AiBannerView(module = itemData)
-                        }
-
-                        Constants.TYPE_POST_BANNER -> {
-                            PostBannerView(module = itemData)
-                        }
-                    }
-                }
+            BindingListView(Modifier, items) {
                 if (items.loadState.append is LoadState.Loading) {
                     item {
                         Box(modifier = Modifier.fillMaxWidth()) {
@@ -112,9 +90,6 @@ class PullToRefreshByPagerActivity : BaseActivity() {
                     }
                 }
             }
-//            BindingListView(Modifier, items) {
-//
-//            }
             // 自动加载下一页逻辑
             val lazyListState = rememberLazyListState()
             LaunchedEffect(lazyListState) {
@@ -186,8 +161,8 @@ class PullToRefreshByPagerActivity : BaseActivity() {
         composeLoadMore: LazyListScope.() -> Unit
     ) {
         LazyColumn(modifier = modifier.fillMaxSize()) {
-            itemsIndexed(items = data.itemSnapshotList) { index, message ->
-                val itemData = message?.data as? ModuleBean ?: return@itemsIndexed
+            items(items = data) { message ->
+                val itemData = message?.data as? ModuleBean ?: return@items
                 when (message.itemType) {
                     Constants.TYPE_TITLE -> {
                         TitleItemView(module = itemData)
@@ -211,23 +186,46 @@ class PullToRefreshByPagerActivity : BaseActivity() {
                 }
             }
             composeLoadMore()
-            if (data.loadState.append is LoadState.Loading) {
-                item {
-                    Box(modifier = Modifier.fillMaxWidth()) {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .padding(16.dp)
-                        )
-                    }
-                }
-            } else if (data.loadState.append is LoadState.Error) {
-                val errorState = data.loadState.append as LoadState.Error
-                item {
-                    Text("Error loading more: ${errorState.error.localizedMessage}")
-                }
-            }
         }
     }
 }
+public fun <T : Any> LazyListScope.items(
+    items: LazyPagingItems<T>,
+    key: ((item: T) -> Any)? = null,
+    itemContent: @Composable LazyItemScope.(value: T?) -> Unit
+) {
+    items(
+        count = items.itemCount,
+        key = if (key == null) null else { index ->
+            val item = items.peek(index)
+            if (item == null) {
+                PagingPlaceholderKey(index)
+            } else {
+                key(item)
+            }
+        }
+    ) { index ->
+        itemContent(items[index])
+    }
+}
+private data class PagingPlaceholderKey(private val index: Int) : Parcelable {
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeInt(index)
+    }
 
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object {
+        @Suppress("unused")
+        @JvmField
+        val CREATOR: Parcelable.Creator<PagingPlaceholderKey> =
+            object : Parcelable.Creator<PagingPlaceholderKey> {
+                override fun createFromParcel(parcel: Parcel) =
+                    PagingPlaceholderKey(parcel.readInt())
+
+                override fun newArray(size: Int) = arrayOfNulls<PagingPlaceholderKey?>(size)
+            }
+    }
+}
