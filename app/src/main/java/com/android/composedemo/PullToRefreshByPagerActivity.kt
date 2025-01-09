@@ -1,8 +1,6 @@
 package com.android.composedemo
 
 import android.os.Bundle
-import android.os.Parcel
-import android.os.Parcelable
 import androidx.activity.viewModels
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.VectorConverter
@@ -16,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
@@ -30,7 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.dimensionResource
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -39,6 +36,7 @@ import coil.request.ImageRequest
 import com.android.composedemo.data.bean.AdapterBean
 import com.android.composedemo.data.bean.ModuleBean
 import com.android.composedemo.data.viewmodel.DemoHomeViewModel
+import com.android.composedemo.utils.items
 import com.android.composedemo.widgets.pullrefreshlayout.PullToRefresh
 import com.android.composedemo.widgets.pullrefreshlayout.rememberPullToRefreshState
 
@@ -79,7 +77,7 @@ class PullToRefreshByPagerActivity : BaseActivity() {
                             CircularProgressIndicator(
                                 modifier = Modifier
                                     .align(Alignment.Center)
-                                    .padding(16.dp)
+                                    .padding(dimensionResource(R.dimen.dp_16))
                             )
                         }
                     }
@@ -153,7 +151,6 @@ class PullToRefreshByPagerActivity : BaseActivity() {
         }
     }
 
-    // content: @Composable () -> Unit
     @Composable
     private fun BindingListView(
         modifier: Modifier,
@@ -187,45 +184,5 @@ class PullToRefreshByPagerActivity : BaseActivity() {
             }
             composeLoadMore()
         }
-    }
-}
-public fun <T : Any> LazyListScope.items(
-    items: LazyPagingItems<T>,
-    key: ((item: T) -> Any)? = null,
-    itemContent: @Composable LazyItemScope.(value: T?) -> Unit
-) {
-    items(
-        count = items.itemCount,
-        key = if (key == null) null else { index ->
-            val item = items.peek(index)
-            if (item == null) {
-                PagingPlaceholderKey(index)
-            } else {
-                key(item)
-            }
-        }
-    ) { index ->
-        itemContent(items[index])
-    }
-}
-private data class PagingPlaceholderKey(private val index: Int) : Parcelable {
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeInt(index)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object {
-        @Suppress("unused")
-        @JvmField
-        val CREATOR: Parcelable.Creator<PagingPlaceholderKey> =
-            object : Parcelable.Creator<PagingPlaceholderKey> {
-                override fun createFromParcel(parcel: Parcel) =
-                    PagingPlaceholderKey(parcel.readInt())
-
-                override fun newArray(size: Int) = arrayOfNulls<PagingPlaceholderKey?>(size)
-            }
     }
 }
