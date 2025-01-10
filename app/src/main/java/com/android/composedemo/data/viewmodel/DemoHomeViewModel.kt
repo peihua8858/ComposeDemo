@@ -1,7 +1,6 @@
 package com.android.composedemo.data.viewmodel
 
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -25,7 +24,9 @@ import com.android.composedemo.utils.apiSyncRequest
 import com.android.composedemo.utils.request
 import com.fz.gson.GsonUtils
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import java.nio.charset.Charset
 import kotlin.random.Random
 
@@ -39,21 +40,32 @@ import kotlin.random.Random
 class DemoHomeViewModel : ViewModel() {
     //    val modelState3 = mutableStateOf<MutableList<AdapterBean<*>>>(mutableListOf())
     val modelState3 = mutableStateListOf<AdapterBean<*>>()
+    private val gridViewPagingConfig = PagingConfig(
+        pageSize = 20,
+        initialLoadSize = 20,  // 可根据需要调整
+        maxSize = 100, // 可选，最大加载数据量
+        enablePlaceholders = false // 根据需要设置
+    )
 
     //paging3 分页器
-    val modelState2 = Pager( PagingConfig(
+    private val config = PagingConfig(
         pageSize = 6,
         initialLoadSize = 6,  // 可根据需要调整
         maxSize = 100, // 可选，最大加载数据量
         enablePlaceholders = false // 根据需要设置
-    ), null) { HomePagingSource(this) }
+    )
+    val data = Pager(config, null) { HomePagingSource(this, config) }
+        .flow.cachedIn(viewModelScope)
+
+    val gridViewData = Pager(gridViewPagingConfig, null)
+    { GridViewPagingSource(this, gridViewPagingConfig) }
         .flow.cachedIn(viewModelScope)
 
     /**
      * 请求首页数据
      */
     val modelState = MutableLiveData<ResultData<MutableList<AdapterBean<*>>>>()
-    val fileNames = mutableListOf("render_data.json", "render_data2.json")
+    private val fileNames = mutableListOf("render_data.json", "render_data2.json")
 
     suspend fun requestPagingData(pageSize: Int): MutableList<AdapterBean<*>> {
         delay(1000)
@@ -84,6 +96,26 @@ class DemoHomeViewModel : ViewModel() {
                     else -> {
                         adapterList.add(AdapterBean(Constants.TYPE_ITEM, item))
                     }
+                }
+            }
+        }
+        if (pageSize > 0) {
+            adapterList = adapterList.subList(0, pageSize)
+        }
+        return adapterList
+    }
+
+    suspend fun requestGridPagingData(pageSize: Int): MutableList<AdapterBean<*>> {
+        delay(1000)
+        val index = Random.nextInt(fileNames.size)
+        val model = readLocalData(fileNames[index]).model
+            ?: throw RequestException(-1, "model is null")
+        val moduleList = model.page?.moduleList
+        var adapterList = mutableListOf<AdapterBean<*>>()
+        if (!moduleList.isNullOrEmpty()) {
+            moduleList.forEach { item ->
+                item.dataList?.forEach {
+                    adapterList.add(AdapterBean(Constants.TYPE_ITEM, it))
                 }
             }
         }
@@ -175,23 +207,80 @@ class DemoHomeViewModel : ViewModel() {
     }
 }
 
-class HomePagingSource(private val viewModel: DemoHomeViewModel) :
+class HomePagingSource(
+    private val viewModel: DemoHomeViewModel,
+    private val config: PagingConfig
+) :
     PagingSource<Int, AdapterBean<*>>() {
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, AdapterBean<*>> {
-        val currentPage = params.key ?: 1
-        val pageSize = params.loadSize
-        Logcat.d("HomePagingSource", " >>>currentPage = $currentPage, pageSize = $pageSize")
-        val response = viewModel.requestPagingData(pageSize)
-        return LoadResult.Page(
-            data = response,
-            prevKey = if (currentPage == 1) null else currentPage - 1,
-            nextKey = if (response.isEmpty()) null else currentPage + 1
-        )
+        return withContext(Dispatchers.IO) {
+            val currentPage = params.key ?: 1
+            val loadSize = params.loadSize
+            val response = viewModel.requestPagingData(loadSize)
+            val curTotalSize = currentPage * loadSize
+            val maxSize = config.maxSize
+            val nextKey = if (curTotalSize >= maxSize || response.isEmpty()) {
+                null
+            } else {
+                currentPage + 1
+            }
+            Logcat.d("HomePagingSource", " >>>currentPage = $currentPage, loadSize = $loadSize")
+            return@withContext LoadResult.Page(
+                data = response,
+                prevKey = if (currentPage == 1) null else currentPage - 1,
+                nextKey = nextKey
+            )
+        }
     }
+
     override fun getRefreshKey(state: PagingState<Int, AdapterBean<*>>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             val page = state.closestPageToPosition(anchorPosition)
+            Logcat.d("HomePagingSource", " >>>currentPage = ${page?.nextKey}, pageSize = $page")
             page?.prevKey?.plus(1) ?: page?.nextKey?.minus(1) // 返回刷新会使用的键
         }
     }
+}
+
+class GridViewPagingSource(
+    private val viewModel: DemoHomeViewModel,
+    private val config: PagingConfig
+) :
+    PagingSource<Int, AdapterBean<*>>() {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, AdapterBean<*>> {
+        return withContext(Dispatchers.IO) {
+            val currentPage = params.key ?: 1
+            val loadSize = params.loadSize
+            val maxSize = config.maxSize
+            val response = viewModel.requestGridPagingData(loadSize)
+            val curTotalSize = currentPage * loadSize
+            val nextKey = if (curTotalSize >= maxSize || response.isEmpty()) {
+                null
+            } else {
+                currentPage + 1
+            }
+            Logcat.d(
+                "HomePagingSource",
+                " >>>currentPage = $currentPage, loadSize = $loadSize,nextKey = $nextKey,maxSize = $maxSize"
+            )
+            return@withContext LoadResult.Page(
+                data = response,
+                prevKey = if (currentPage == 1) null else currentPage - 1,
+                nextKey = nextKey
+            )
+        }
+    }
+
+    override fun getRefreshKey(state: PagingState<Int, AdapterBean<*>>): Int? {
+        // 返回null表示刷新重回第一页
+        return null
+    }
+//
+//    override fun getRefreshKey(state: PagingState<Int, AdapterBean<*>>): Int? {
+//        return state.anchorPosition?.let { anchorPosition ->
+//            val page = state.closestPageToPosition(anchorPosition)
+//            Logcat.d("HomePagingSource", " >>>currentPage = ${page?.nextKey}, pageSize = $page")
+//            page?.prevKey?.plus(1) ?: page?.nextKey?.minus(1) // 返回刷新会使用的键
+//        }
+//    }
 }

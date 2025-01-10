@@ -1,5 +1,6 @@
 package com.android.composedemo
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.compose.animation.core.LinearEasing
@@ -13,41 +14,43 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridScope
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.android.composedemo.data.bean.AdapterBean
-import com.android.composedemo.data.bean.ModuleBean
+import com.android.composedemo.data.bean.Data
 import com.android.composedemo.data.viewmodel.DemoHomeViewModel
-import com.android.composedemo.utils.Logcat
+import com.android.composedemo.utils.LaunchedLoadMore
 import com.android.composedemo.utils.items
 import com.android.composedemo.utils.showToast
 import com.android.composedemo.widgets.pullrefreshlayout.PullToRefresh
 import com.android.composedemo.widgets.pullrefreshlayout.rememberPullToRefreshState
-import kotlinx.coroutines.flow.last
 
 /**
  * use [PullToRefresh]
  */
-class PullToRefreshByPagerActivity : BaseActivity() {
+class PullToRefreshByPagerGridViewActivity : BaseActivity() {
     private val mViewModel by viewModels<DemoHomeViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,10 +60,10 @@ class PullToRefreshByPagerActivity : BaseActivity() {
     @Composable
     @ExperimentalMaterial3Api
     override fun ContentView(modifier: Modifier) {
-        val items = mViewModel.data.collectAsLazyPagingItems()
+        val items = mViewModel.gridViewData.collectAsLazyPagingItems()
         val refreshing =
             rememberPullToRefreshState(isRefreshing = items.loadState.refresh is LoadState.Loading)
-        val lazyListState = rememberLazyListState()
+        val lazyListState = rememberLazyGridState()
         PullToRefresh(
             state = refreshing,
             onRefresh = {
@@ -81,10 +84,13 @@ class PullToRefreshByPagerActivity : BaseActivity() {
             }
             val loadMoreState = items.loadState.append
             BindingListView(Modifier, items, lazyListState) {
-                item {
+                item(span = { GridItemSpan(maxLineSpan) }) {
                     if (loadMoreState is LoadState.Error) {
-                        Text("Error loading more: ${loadMoreState.error.localizedMessage}")
-                    } else if (loadMoreState.endOfPaginationReached.not()) {
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = "Error loading more: ${loadMoreState.error.localizedMessage}"
+                        )
+                    } else if(loadMoreState.endOfPaginationReached.not()) {
                         Box(modifier = Modifier.fillMaxWidth()) {
                             CircularProgressIndicator(
                                 modifier = Modifier
@@ -95,33 +101,8 @@ class PullToRefreshByPagerActivity : BaseActivity() {
                     }
                 }
             }
-            // 自动加载下一页逻辑
-//            LaunchedEffect(lazyListState) {
-//                snapshotFlow { lazyListState.layoutInfo }
-//                    .collect { layoutInfo ->
-//                        val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
-//                        // 确保到达最后一项并且没有加载状态
-//                        if (lastVisibleItemIndex >= items.itemCount - 1 &&
-//                            items.loadState.append is LoadState.NotLoading &&
-//                            items.loadState.refresh !is LoadState.Loading
-//                        ) {
-//                            Logcat.d("lastVisibleItemIndex:$lastVisibleItemIndex,加载更多")
-//                           items.retry() // 请求下一页
-//                            Logcat.d("PagingDebug", "Append LoadState: ${items.loadState.append}")
-//                        }
-//                    }
-//            }
-//            LaunchedEffect(lazyListState) {
-//                snapshotFlow { lazyListState.layoutInfo }
-//                    .collect { layoutInfo ->
-//                        val lastVisibleItemIndex =
-//                            layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
-//                        if (lastVisibleItemIndex >= items.itemCount - 1 && items.loadState.append is LoadState.NotLoading) {
-//                            // 当最后一项可见，并且没有加载状态时
-//                            items.retry() // 触发加载更多
-//                        }
-//                    }
-//            }
+            // 监测滚动状态以自动加载更多
+            lazyListState.LaunchedLoadMore(items)
         }
     }
 
@@ -176,35 +157,43 @@ class PullToRefreshByPagerActivity : BaseActivity() {
     private fun BindingListView(
         modifier: Modifier,
         data: LazyPagingItems<AdapterBean<*>>,
-        state: LazyListState = rememberLazyListState(),
-        composeLoadMore: LazyListScope.() -> Unit
+        state: LazyGridState = rememberLazyGridState(),
+        composeLoadMore: LazyGridScope.() -> Unit
     ) {
-        LazyColumn(modifier = modifier.fillMaxSize(), state = state) {
-            items(items = data) { message ->
-                val itemData = message?.data as? ModuleBean ?: return@items
-                when (message.itemType) {
-                    Constants.TYPE_TITLE -> {
-                        TitleItemView(module = itemData)
-                    }
+        val configuration = LocalConfiguration.current
+        val isLandScape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-                    Constants.TYPE_ITEM -> {
-                        HomeItemView(module = itemData)
-                    }
+        /**
+         * 列表左右间距
+         */
+        val mMarin = dimensionResource(R.dimen.dp_32)
 
-                    Constants.TYPE_BANNER -> {
-                        BannerView(module = itemData)
-                    }
-
-                    Constants.TYPE_AI_BANNER -> {
-                        AiBannerView(module = itemData)
-                    }
-
-                    Constants.TYPE_POST_BANNER -> {
-                        PostBannerView(module = itemData)
-                    }
-                }
+        /**
+         * 列表item之间的间距
+         */
+        val mGap = dimensionResource(R.dimen.dp_8)
+        val spanCount =
+            if (isLandScape) Constants.LANDSCAPE_COLUMN_COUNT else Constants.PORTRAIT_COLUMN_COUNT
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(if (isLandScape) Constants.LANDSCAPE_COLUMN_COUNT else Constants.PORTRAIT_COLUMN_COUNT),
+            modifier = modifier.fillMaxSize(),
+            state = state
+        ) {
+            items(items = data) { index, message ->
+                val itemData = message?.data as? Data ?: return@items
+                val spanIndex = index % spanCount
+                ItemView(
+                    modifier = Modifier
+                        .wrapContentHeight(Alignment.CenterVertically)
+                        .padding(
+                            start = (if (isLandScape && spanIndex > 0) mGap else if (spanIndex == 0) mMarin else mMarin / 2),
+                            bottom = mGap * 2,
+                            end = if (spanIndex == spanCount - 1) mMarin else if (isLandScape) mGap else 0.dp
+                        ), item = itemData
+                )
             }
             composeLoadMore()
         }
     }
+
 }
