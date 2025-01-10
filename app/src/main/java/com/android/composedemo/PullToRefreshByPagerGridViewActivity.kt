@@ -102,7 +102,7 @@ class PullToRefreshByPagerGridViewActivity : BaseActivity() {
                 }
             }
             // 监测滚动状态以自动加载更多
-            lazyListState.LaunchedLoadMore(items)
+//            lazyListState.LaunchedLoadMore(items)
         }
     }
 
@@ -179,7 +179,7 @@ class PullToRefreshByPagerGridViewActivity : BaseActivity() {
             modifier = modifier.fillMaxSize(),
             state = state
         ) {
-            items(items = data) { index, message ->
+            items(items = data, spanCount = spanCount) { index, message ->
                 val itemData = message?.data as? Data ?: return@items
                 val spanIndex = index % spanCount
                 ItemView(
