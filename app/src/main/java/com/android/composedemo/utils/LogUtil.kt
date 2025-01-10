@@ -5,49 +5,49 @@ package com.android.composedemo.utils
 
 
 private const val STACK_TRACE_INDEX = 6
-fun <T> T?.aLog(lazyMessage: () -> Any): T? {
+fun <T> T.aLog(lazyMessage: () -> Any): T {
     val message = lazyMessage()
     Logcat.printLog(STACK_TRACE_INDEX, Logcat.A, null, message)
     return this
 }
 
-fun <T> T?.vLog(lazyMessage: () -> Any): T? {
+fun <T> T.vLog(lazyMessage: () -> Any): T {
     val message = lazyMessage()
     Logcat.printLog(STACK_TRACE_INDEX, Logcat.V, null, message)
     return this
 }
 
-fun <T> T?.jsonLog(lazyMessage: () -> Any): T? {
+fun <T> T.jsonLog(lazyMessage: () -> Any): T {
     val message = lazyMessage()
     Logcat.printLog(STACK_TRACE_INDEX, Logcat.JSON, null, message)
     return this
 }
 
-fun <T> T?.xmlLog(lazyMessage: () -> Any): T? {
+fun <T> T.xmlLog(lazyMessage: () -> Any): T {
     val message = lazyMessage()
     Logcat.printLog(STACK_TRACE_INDEX, Logcat.XML, null, message)
     return this
 }
 
-fun <T> T?.wLog(lazyMessage: () -> Any): T? {
+fun <T> T.wLog(lazyMessage: () -> Any): T {
     val message = lazyMessage()
     Logcat.printLog(STACK_TRACE_INDEX, Logcat.W, null, message)
     return this
 }
 
-fun <T> T?.eLog(lazyMessage: () -> Any): T? {
+fun <T> T.eLog(lazyMessage: () -> Any): T {
     val message = lazyMessage()
     Logcat.printLog(STACK_TRACE_INDEX, Logcat.E, null, message)
     return this
 }
 
-fun <T> T?.dLog(lazyMessage: () -> Any): T? {
+fun <T> T.dLog(lazyMessage: () -> Any): T {
     val message = lazyMessage()
     Logcat.printLog(STACK_TRACE_INDEX, Logcat.D, null, message)
     return this
 }
 
-fun <T> T?.iLog(lazyMessage: () -> Any): T? {
+fun <T> T.iLog(lazyMessage: () -> Any): T {
     val message = lazyMessage()
     Logcat.printLog(STACK_TRACE_INDEX, Logcat.I, null, message)
     return this
