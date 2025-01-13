@@ -169,3 +169,12 @@ fun <T : Any> LazyGridState.LaunchedLoadMore(items: LazyPagingItems<T>) {
             }
     }
 }
+
+fun <T : Any> LazyPagingItems<T>.forEach(action: (T) -> Unit) {
+    for (index in 0 until itemCount) {
+        val item = peek(index)
+        if (item != null) {
+            action(item)
+        }
+    }
+}

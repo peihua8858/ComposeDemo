@@ -70,7 +70,7 @@ import com.android.composedemo.data.bean.AdapterBean
 import com.android.composedemo.data.bean.Data
 import com.android.composedemo.data.bean.ModuleBean
 import com.android.composedemo.data.viewmodel.DemoHomeViewModel
-import com.android.composedemo.ui.theme.MarketFontFamily
+import com.android.composedemo.ui.theme.DemoFontFamily
 import com.android.composedemo.utils.dimensionResourceByPx
 import com.android.composedemo.utils.ellipsize
 import com.android.composedemo.utils.getDimension
@@ -180,7 +180,7 @@ fun Activity.TitleItemView(module: ModuleBean) {
             text = module.moduleName,
             modifier = Modifier.align(Alignment.CenterVertically),
             fontSize = dimensionResource(id = R.dimen.sp_16).value.sp,
-            fontFamily = MarketFontFamily.NotoSansSc500,
+            fontFamily = DemoFontFamily.NotoSansSc500,
             color = colorResource(id = R.color.color_1f1f1f)
         )
         val isVisibleMore =
@@ -188,7 +188,7 @@ fun Activity.TitleItemView(module: ModuleBean) {
         if (isVisibleMore) {
             Text(text = stringResource(id = R.string.text_more),
                 fontSize = dimensionResource(id = R.dimen.sp_12).value.sp,
-                fontFamily = MarketFontFamily.NotoSansSc400,
+                fontFamily = DemoFontFamily.NotoSansSc400,
                 color = colorResource(id = R.color.color_1f1f1f_25),
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
@@ -309,14 +309,14 @@ fun ItemView(modifier: Modifier = Modifier, item: Data) {
                 text = item.title.ellipsize(10) ?: "",
                 color = colorResource(id = R.color.color_1f1f1f),
                 fontSize = dimensionResource(id = R.dimen.sp_16).value.sp,
-                fontFamily = MarketFontFamily.NotoSansSc400,
+                fontFamily = DemoFontFamily.NotoSansSc400,
                 maxLines = 1
             )
             Text(
                 text = item.subTitle.ellipsize(19) ?: "",
                 color = colorResource(id = R.color.color_1f1f1f_50),
                 fontSize = dimensionResource(id = R.dimen.sp_10).value.sp,
-                fontFamily = MarketFontFamily.NotoSansSc400,
+                fontFamily = DemoFontFamily.NotoSansSc400,
                 modifier = Modifier.padding(top = dimensionResource(id = R.dimen.dp_3)),
                 maxLines = 1
             )
@@ -412,7 +412,7 @@ fun BannerView(modifier: Modifier = Modifier, module: ModuleBean) {
                             modifier = modifier.fillMaxWidth(),
                             text = item.title.ellipsize(10) ?: "",
                             fontSize = dimensionResource(id = R.dimen.sp_16).value.sp,
-                            fontFamily = MarketFontFamily.NotoSansSc400,
+                            fontFamily = DemoFontFamily.NotoSansSc400,
                             color = colorResource(id = R.color.white)
                         )
                         Text(
@@ -421,7 +421,7 @@ fun BannerView(modifier: Modifier = Modifier, module: ModuleBean) {
                                 .padding(top = dimensionResource(id = R.dimen.dp_3)),
                             text = "@ ${item.author}".ellipsize(14) ?: "",
                             fontSize = dimensionResource(id = R.dimen.sp_10).value.sp,
-                            fontFamily = MarketFontFamily.NotoSansSc400,
+                            fontFamily = DemoFontFamily.NotoSansSc400,
                             color = colorResource(id = R.color.white_72)
                         )
                     }
@@ -572,7 +572,7 @@ fun AiBannerView(modifier: Modifier = Modifier, module: ModuleBean) {
                                 .align(Alignment.CenterHorizontally),
                             text = item.title.ellipsize(10) ?: "",
                             fontSize = dimensionResource(id = if (isLandScape) R.dimen.sp_16 else R.dimen.sp_14).value.sp,
-                            fontFamily = MarketFontFamily.NotoSansSc400,
+                            fontFamily = DemoFontFamily.NotoSansSc400,
                             color = colorResource(id = R.color.white)
                         )
                         Text(
@@ -583,7 +583,7 @@ fun AiBannerView(modifier: Modifier = Modifier, module: ModuleBean) {
                                 ),
                             text = item.subTitle,
                             fontSize = dimensionResource(id = R.dimen.sp_10).value.sp,
-                            fontFamily = MarketFontFamily.NotoSansSc400,
+                            fontFamily = DemoFontFamily.NotoSansSc400,
                             color = colorResource(id = R.color.white_72)
                         )
                     }
@@ -710,7 +710,7 @@ fun PostBannerView(modifier: Modifier = Modifier, module: ModuleBean) {
                                 .align(Alignment.CenterHorizontally),
                             text = item.title.ellipsize(10) ?: "",
                             fontSize = dimensionResource(id = if (isLandScape) R.dimen.sp_16 else R.dimen.sp_14).value.sp,
-                            fontFamily = MarketFontFamily.NotoSansSc400,
+                            fontFamily = DemoFontFamily.NotoSansSc400,
                             color = colorResource(id = R.color.white)
                         )
                         Text(
@@ -721,7 +721,7 @@ fun PostBannerView(modifier: Modifier = Modifier, module: ModuleBean) {
                                 ),
                             text = item.subTitle,
                             fontSize = dimensionResource(id = R.dimen.sp_10).value.sp,
-                            fontFamily = MarketFontFamily.NotoSansSc400,
+                            fontFamily = DemoFontFamily.NotoSansSc400,
                             color = colorResource(id = R.color.white_72)
                         )
                     }
@@ -760,7 +760,7 @@ fun Activity.ToolbarView(modifier: Modifier = Modifier) {
                 .weight(1f) // 占据一定空间
                 .wrapContentWidth(Alignment.CenterHorizontally) // 水平居中
                 .fillMaxWidth(),
-            fontFamily = MarketFontFamily.NotoSansSc500,
+            fontFamily = DemoFontFamily.NotoSansSc500,
             fontSize = dimensionResource(id = R.dimen.sp_20).value.sp,
         )
     }

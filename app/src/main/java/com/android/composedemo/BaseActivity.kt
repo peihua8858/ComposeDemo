@@ -9,7 +9,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,7 +19,6 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -41,7 +39,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.android.composedemo.ui.theme.ComposeDemoTheme
-import com.android.composedemo.ui.theme.MarketFontFamily
+import com.android.composedemo.ui.theme.DemoFontFamily
 import com.android.composedemo.utils.isLandScape
 
 abstract class BaseActivity : ComponentActivity() {
@@ -98,7 +96,7 @@ abstract class BaseActivity : ComponentActivity() {
                                             .wrapContentWidth(Alignment.CenterHorizontally) // 水平居中
                                             .clickable(onClick = { isShowDialog.value = true })
                                             .align(Alignment.Center),
-                                        fontFamily = MarketFontFamily.NotoSansSc500,
+                                        fontFamily = DemoFontFamily.NotoSansSc500,
                                         fontSize = dimensionResource(id = R.dimen.sp_20).value.sp,
                                     )
                                 }
@@ -144,7 +142,7 @@ fun MarketAlertDialog(
                     modifier = Modifier
                         .wrapContentSize(Alignment.Center)
                         .align(Alignment.Center),
-                    fontFamily = MarketFontFamily.NotoSansSc500,
+                    fontFamily = DemoFontFamily.NotoSansSc500,
                     fontSize = dimensionResource(id = R.dimen.sp_20).value.sp,
                 )
             }
@@ -156,7 +154,7 @@ fun MarketAlertDialog(
                     modifier = Modifier
                         .wrapContentSize(Alignment.Center)
                         .align(Alignment.Center),
-                    fontFamily = MarketFontFamily.NotoSansSc400,
+                    fontFamily = DemoFontFamily.NotoSansSc400,
                     fontSize = dimensionResource(id = R.dimen.sp_16).value.sp,
                 )
             }
@@ -175,7 +173,7 @@ fun MarketAlertDialog(
                 ) {
                     Text(
                         stringResource(id = R.string.text_cancel),
-                        fontFamily = MarketFontFamily.NotoSansSc400,
+                        fontFamily = DemoFontFamily.NotoSansSc400,
                         fontSize = dimensionResource(id = R.dimen.sp_16).value.sp,
                     )
                 }
@@ -188,7 +186,7 @@ fun MarketAlertDialog(
                 ) {
                     Text(
                         stringResource(id = R.string.text_config),
-                        fontFamily = MarketFontFamily.NotoSansSc500,
+                        fontFamily = DemoFontFamily.NotoSansSc500,
                         fontSize = dimensionResource(id = R.dimen.sp_16).value.sp,
                     )
                 }
