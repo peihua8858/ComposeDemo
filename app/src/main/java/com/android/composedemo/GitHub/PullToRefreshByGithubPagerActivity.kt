@@ -70,6 +70,7 @@ import com.android.composedemo.R
 import com.android.composedemo.ui.theme.DemoFontFamily
 import com.android.composedemo.utils.LaunchedLoadMore
 import com.android.composedemo.utils.forEach
+import com.android.composedemo.utils.showToast
 import com.android.composedemo.widgets.pullrefreshlayout.PullToRefresh
 import com.android.composedemo.widgets.pullrefreshlayout.rememberPullToRefreshState
 
@@ -127,14 +128,14 @@ class PullToRefreshByGithubPagerActivity : BaseActivity() {
                         LoadingView(Modifier)
                     }
                 } else if (refreshState is LoadState.Error) {
-//                    if (items.itemCount == 0) {
-                    ErrorView(Modifier, refreshState) {
-                        items.retry()
+                    if (items.itemCount == 0) {
+                        ErrorView(Modifier, refreshState) {
+                            items.retry()
+                        }
+                    } else {
+                        showToast("刷新失败")
+                        ShowContent(Modifier, items)
                     }
-//                    } else {
-//                        showToast("刷新失败")
-//                        ShowContent(Modifier, items)
-//                    }
                 } else {
                     ShowContent(Modifier, items)
                 }
@@ -333,10 +334,10 @@ class PullToRefreshByGithubPagerActivity : BaseActivity() {
                         .background(colorResource(id = R.color.white))
                         .width(IntrinsicSize.Max)
                         .constrainAs(forks) {
-                        end.linkTo(parent.end)
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                    }) {
+                            end.linkTo(parent.end)
+                            top.linkTo(parent.top)
+                            bottom.linkTo(parent.bottom)
+                        }) {
                         Row {
                             Image(
                                 painter = painterResource(id = R.drawable.ic_git_branch),
@@ -356,10 +357,10 @@ class PullToRefreshByGithubPagerActivity : BaseActivity() {
                             .wrapContentSize(Alignment.Center)
                             .width(IntrinsicSize.Max)
                             .constrainAs(stars) {
-                            end.linkTo(forks.start)
-                            top.linkTo(parent.top)
-                            bottom.linkTo(parent.bottom)
-                        }) {
+                                end.linkTo(forks.start)
+                                top.linkTo(parent.top)
+                                bottom.linkTo(parent.bottom)
+                            }) {
                         Row {
                             Image(
                                 painter = painterResource(id = R.drawable.ic_star),

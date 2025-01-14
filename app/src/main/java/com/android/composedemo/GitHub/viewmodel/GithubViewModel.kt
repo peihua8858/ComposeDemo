@@ -83,16 +83,17 @@ class GithubViewModel(
                         return@insertSeparators null
                     }
 
+                    val afterStarCount = after.roundedStarCount
                     if (before == null) {
                         // we're at the beginning of the list
-                        return@insertSeparators UiModel.SeparatorItem("${after.roundedStarCount}0.000+ stars")
+                        return@insertSeparators UiModel.SeparatorItem((if (afterStarCount < 1) "<1k" else ("${afterStarCount}k+")) + "stars")
                     }
                     // check between 2 items
-                    if (before.roundedStarCount > after.roundedStarCount) {
-                        if (after.roundedStarCount >= 1) {
-                            UiModel.SeparatorItem("${after.roundedStarCount}0.000+ stars")
+                    if (before.roundedStarCount > afterStarCount) {
+                        if (afterStarCount >= 1) {
+                            UiModel.SeparatorItem("${afterStarCount}k+ stars")
                         } else {
-                            UiModel.SeparatorItem("< 10.000+ stars")
+                            UiModel.SeparatorItem("< 1k stars")
                         }
                     } else {
                         // no separator
@@ -129,11 +130,20 @@ sealed class UiModel {
 }
 
 private val UiModel.RepoItem.roundedStarCount: Int
-    get() = this.repo.stars / 10_000
+    get() {
+        val stars = this.repo.stars
+        if (stars >= 10_000) {
+            return stars / 1_000
+        } else if (stars >= 1_000) {
+            return 1
+        }
+        return 0
+    }
 
 private const val LAST_QUERY_SCROLLED: String = "last_query_scrolled"
 private const val LAST_SEARCH_QUERY: String = "last_search_query"
 private const val DEFAULT_QUERY = "iOS"
+
 /**
  * Factory for ViewModels
  */

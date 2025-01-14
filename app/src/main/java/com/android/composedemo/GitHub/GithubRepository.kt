@@ -11,13 +11,12 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.android.composedemo.GitHub.api.GithubService
-import com.android.composedemo.GitHub.api.GithubService2
-import com.android.composedemo.GitHub.api.RepoSearchResponse
 import com.android.composedemo.GitHub.db.RepoDatabase
 import com.android.composedemo.GitHub.model.RemoteKeys
 import com.android.composedemo.GitHub.model.Repo
 import com.android.composedemo.utils.Logcat
 import com.android.composedemo.utils.isWorkThread
+import com.fz.gson.GsonUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -30,7 +29,7 @@ class GithubRepository(
 ) {
     val config = PagingConfig(
         pageSize = NETWORK_PAGE_SIZE,
-        initialLoadSize = NETWORK_PAGE_SIZE,
+//        initialLoadSize = NETWORK_PAGE_SIZE,
         enablePlaceholders = false
     )
 
@@ -65,7 +64,7 @@ class GithubRepository(
             state: PagingState<Int, Repo>
         ): MediatorResult {
             if (isWorkThread()) {
-                Logcat.d("HomePagingSource", " >>>loadType = $loadType,query = $query")
+                Logcat.d("RemotePagingSource", " >>>loadType = $loadType,query = $query")
                 val params: LoadParams<Int> = when (loadType) {
                     LoadType.REFRESH -> {
                         val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
@@ -167,19 +166,24 @@ class GithubRepository(
                 val currentPage = params.key ?: GITHUB_STARTING_PAGE_INDEX
                 val loadSize = params.loadSize
                 val apiQuery = "$query $IN_QUALIFIER"
+                val initialLoadSize = config.initialLoadSize
                 val response = service.requestData(apiQuery, currentPage, loadSize)
+                Logcat.writeLog("RemotePagingSource", " >>>response = ${GsonUtils.toJson(response)}")
 //                val response = service.requestLocalData() as? RepoSearchResponse
+                val totalPage = calTotalPage(response?.total ?: 0, loadSize)
                 val curTotalSize = currentPage * loadSize
                 val maxSize = config.maxSize
                 val nextKey =
-                    if (curTotalSize >= maxSize || response == null || response.isEmpty()) {
+                    if (curTotalSize >= maxSize || response == null || response.isEmpty() || currentPage >= totalPage) {
                         null
                     } else {
                         currentPage + 1
                     }
                 Logcat.d(
-                    "HomePagingSource",
-                    " >>>currentPage = $currentPage, loadSize = $loadSize, nextKey = $nextKey, maxSize = $maxSize,curTotalSize = $curTotalSize"
+                    "RemotePagingSource",
+                    " >>>currentPage = $currentPage, loadSize = $loadSize," +
+                            " totalPage = $totalPage,initialLoadSize = " +initialLoadSize+
+                            " nextKey = $nextKey, maxSize = $maxSize,curTotalSize = $curTotalSize"
                 )
                 return LoadResult.Page(
                     data = response?.items ?: arrayListOf(),
@@ -193,10 +197,16 @@ class GithubRepository(
             }
         }
 
+        private fun calTotalPage(totalSize: Int, pageSize: Int = NETWORK_PAGE_SIZE): Int {
+            val pageNum = totalSize / pageSize
+            val leftPage = if (totalSize % pageSize > 0) 1 else 0
+            return pageNum + leftPage
+        }
+
         override fun getRefreshKey(state: PagingState<Int, Repo>): Int? {
             return state.anchorPosition?.let { anchorPosition ->
                 val page = state.closestPageToPosition(anchorPosition)
-                Logcat.d("HomePagingSource", " >>>currentPage = ${page?.nextKey}, pageSize = $page")
+                Logcat.d("RemotePagingSource", " >>>currentPage = ${page?.nextKey}, pageSize = $page")
                 page?.prevKey?.plus(1) ?: page?.nextKey?.minus(1) // 返回刷新会使用的键
             }
         }
