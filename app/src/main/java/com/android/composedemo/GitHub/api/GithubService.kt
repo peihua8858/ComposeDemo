@@ -71,30 +71,3 @@ fun <T> createProxy(service: Class<T>): T {
             }
         }) as T
 }
-
-
-//@Suppress("newApi")
-//fun <T> createProxy(service: Class<T>): T {
-//    val serviceMethod = RetrofitClient.getClient(HOST).create(GithubService::class.java)
-//    return Proxy.newProxyInstance(
-//        service.classLoader,
-//        arrayOf(service),
-//        object : InvocationHandler {
-//            private val platform: Platform = Platform.get()
-//            private val emptyArgs = arrayOfNulls<Any>(0)
-//
-//            @Throws(Throwable::class)
-//            override fun invoke(proxy: Any, method: Method, args: Array<Any>?): Any? {
-//                val tempArgs = args ?: emptyArgs
-//                if (method.declaringClass == Any::class.java) {
-//                    return method.invoke(this, *tempArgs)
-//                }
-//
-//                Logcat.d("invoke: ${method.name},isDefault: ${method.isDefault},proxy: ${proxy.javaClass},this: ${this.javaClass}")
-//                Logcat.d("Invoking method: ${method.name} with args: ${tempArgs.joinToString()}")
-//                return if (platform.isDefaultMethod(method)
-//                ) platform.invokeDefaultMethod(method, service, proxy, tempArgs)
-//                else serviceMethod.invoke(method, *tempArgs)
-//            }
-//        }) as T
-//}
