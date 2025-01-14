@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -57,6 +59,8 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+//        freeCompilerArgs += intArrayOf("-Xjvm-default=all")
+        freeCompilerArgs += "-Xjvm-default=all"
     }
     buildFeatures {
         compose = true

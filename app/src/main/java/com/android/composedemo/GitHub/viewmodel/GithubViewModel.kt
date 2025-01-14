@@ -107,7 +107,7 @@ class GithubViewModel(
         fun Factory(owner: ComponentActivity): ViewModelProvider.Factory {
             return ViewModelFactory(
                 owner,
-                GithubRepository(GithubService.createLocal(), RepoDatabase.getInstance(owner))
+                GithubRepository(GithubService.create(), RepoDatabase.getInstance(owner))
             )
         }
     }

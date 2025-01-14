@@ -6,6 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class RetrofitClient {
     companion object {
+        @JvmStatic
         fun getClient(host: String): Retrofit {
             return Retrofit.Builder()
                 .baseUrl(host)

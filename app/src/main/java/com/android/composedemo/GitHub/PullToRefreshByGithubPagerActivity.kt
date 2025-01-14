@@ -17,11 +17,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
@@ -29,10 +33,13 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,6 +51,8 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -119,15 +128,15 @@ class PullToRefreshByGithubPagerActivity : BaseActivity() {
                     }
                 } else if (refreshState is LoadState.Error) {
 //                    if (items.itemCount == 0) {
-                        ErrorView(Modifier, refreshState) {
-                            items.retry()
-                        }
+                    ErrorView(Modifier, refreshState) {
+                        items.retry()
+                    }
 //                    } else {
 //                        showToast("刷新失败")
-//                        ShowContent(modifier, items)
+//                        ShowContent(Modifier, items)
 //                    }
-                }else{
-                    ShowContent(modifier, items)
+                } else {
+                    ShowContent(Modifier, items)
                 }
             }
         }
@@ -301,10 +310,14 @@ class PullToRefreshByGithubPagerActivity : BaseActivity() {
                     repo.description ?: "", fontFamily = DemoFontFamily.Monospace400,
                     fontSize = dimensionResource(R.dimen.dp_18).value.sp
                 )
-                ConstraintLayout {
+                ConstraintLayout(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = dimensionResource(R.dimen.dp_16))
+                ) {
                     val (language, stars, forks) = createRefs()
                     Text(
-                        repo.language ?: "",
+                        stringResource(id = R.string.language, repo.language ?: ""),
                         modifier = Modifier
                             .constrainAs(language) {
                                 start.linkTo(parent.start)
@@ -312,25 +325,54 @@ class PullToRefreshByGithubPagerActivity : BaseActivity() {
                                 bottom.linkTo(parent.bottom)
                             },
                         fontFamily = DemoFontFamily.Monospace400,
+                        color = colorResource(id = R.color.color_1f1f1f_72),
                         fontSize = dimensionResource(R.dimen.dp_14).value.sp
                     )
-                    Text(
-                        repo.stars.toString(),
-                        modifier = Modifier.constrainAs(stars) {
+                    TextButton(onClick = { }, modifier = Modifier
+                        .wrapContentSize(Alignment.Center)
+                        .background(colorResource(id = R.color.white))
+                        .width(IntrinsicSize.Max)
+                        .constrainAs(forks) {
+                        end.linkTo(parent.end)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                    }) {
+                        Row {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_git_branch),
+                                contentDescription = "",
+                            )
+                            Text(
+                                repo.forks.toString(), fontFamily = DemoFontFamily.Monospace400,
+                                color = colorResource(id = R.color.color_1f1f1f_72),
+                                maxLines = 1,
+                                fontSize = dimensionResource(R.dimen.dp_14).value.sp
+                            )
+                        }
+                    }
+                    TextButton(onClick = { },
+                        modifier = Modifier
+                            .background(colorResource(id = R.color.white))
+                            .wrapContentSize(Alignment.Center)
+                            .width(IntrinsicSize.Max)
+                            .constrainAs(stars) {
                             end.linkTo(forks.start)
                             top.linkTo(parent.top)
                             bottom.linkTo(parent.bottom)
-                        }, fontFamily = DemoFontFamily.Monospace400,
-                        fontSize = dimensionResource(R.dimen.dp_14).value.sp
-                    )
-                    Text(
-                        repo.forks.toString(), modifier = Modifier.constrainAs(stars) {
-                            start.linkTo(parent.end)
-                            top.linkTo(parent.top)
-                            bottom.linkTo(parent.bottom)
-                        }, fontFamily = DemoFontFamily.Monospace400,
-                        fontSize = dimensionResource(R.dimen.dp_14).value.sp
-                    )
+                        }) {
+                        Row {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_star),
+                                contentDescription = "",
+                            )
+                            Text(
+                                repo.stars.toString(), fontFamily = DemoFontFamily.Monospace400,
+                                color = colorResource(id = R.color.color_1f1f1f_72),
+                                maxLines = 1,
+                                fontSize = dimensionResource(R.dimen.dp_14).value.sp
+                            )
+                        }
+                    }
                 }
             }
         }
