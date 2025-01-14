@@ -11,6 +11,7 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.android.composedemo.GitHub.api.GithubService
+import com.android.composedemo.GitHub.api.RepoSearchResponse
 import com.android.composedemo.GitHub.db.RepoDatabase
 import com.android.composedemo.GitHub.model.RemoteKeys
 import com.android.composedemo.GitHub.model.Repo
@@ -167,9 +168,9 @@ class GithubRepository(
                 val loadSize = params.loadSize
                 val apiQuery = "$query $IN_QUALIFIER"
                 val initialLoadSize = config.initialLoadSize
-                val response = service.requestData(apiQuery, currentPage, loadSize)
+//                val response = service.requestData(apiQuery, currentPage, loadSize)
+                val response = service.requestLocalData()
                 Logcat.writeLog("RemotePagingSource", " >>>response = ${GsonUtils.toJson(response)}")
-//                val response = service.requestLocalData() as? RepoSearchResponse
                 val totalPage = calTotalPage(response?.total ?: 0, loadSize)
                 val curTotalSize = currentPage * loadSize
                 val maxSize = config.maxSize

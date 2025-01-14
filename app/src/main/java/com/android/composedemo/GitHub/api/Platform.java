@@ -1,19 +1,29 @@
 package com.android.composedemo.GitHub.api;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+
 import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import com.android.composedemo.utils.Logcat;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.concurrent.Executor;
 
+import retrofit2.CallAdapter;
+
+
+@RequiresApi(api = Build.VERSION_CODES.O)
 class Platform {
     private static final Platform PLATFORM = findPlatform();
 
@@ -21,6 +31,7 @@ class Platform {
         return PLATFORM;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private static Platform findPlatform() {
         return "Dalvik".equals(System.getProperty("java.vm.name"))
                 ? new Platform.Android() //
@@ -30,7 +41,7 @@ class Platform {
     private final boolean hasJava8Types;
     private final @Nullable Constructor<MethodHandles.Lookup> lookupConstructor;
 
-    @SuppressLint("NewApi")
+    @RequiresApi(api = Build.VERSION_CODES.O)
     Platform(boolean hasJava8Types) {
         this.hasJava8Types = hasJava8Types;
 
@@ -57,7 +68,20 @@ class Platform {
         return null;
     }
 
-    @SuppressLint("NewApi")
+
+    int defaultCallAdapterFactoriesSize() {
+        return hasJava8Types ? 2 : 1;
+    }
+
+    int defaultConverterFactoriesSize() {
+        return hasJava8Types ? 1 : 0;
+    }
+
+    boolean isDefaultMethod(Method method) {
+        return hasJava8Types && method.isDefault();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Nullable
     Object invokeDefaultMethod(Method method, Class<?> declaringClass, Object object, Object... args)
             throws Throwable {
@@ -65,12 +89,7 @@ class Platform {
                 lookupConstructor != null
                         ? lookupConstructor.newInstance(declaringClass, -1 /* trusted */)
                         : MethodHandles.lookup();
-        try {
-            return lookup.unreflectSpecial(method, declaringClass).bindTo(object).invokeWithArguments(args);
-        } catch (Throwable e) {
-            Logcat.e("Error invoking default method: "+e.getMessage());
-            throw new RuntimeException(e);
-        }
+        return lookup.unreflectSpecial(method, declaringClass).bindTo(object).invokeWithArguments(args);
     }
 
     static final class Android extends Platform {
