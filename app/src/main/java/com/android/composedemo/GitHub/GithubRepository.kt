@@ -16,6 +16,7 @@ import com.android.composedemo.GitHub.db.RepoDatabase
 import com.android.composedemo.GitHub.model.RemoteKeys
 import com.android.composedemo.GitHub.model.Repo
 import com.android.composedemo.utils.Logcat
+import com.android.composedemo.utils.dLog
 import com.android.composedemo.utils.isWorkThread
 import com.fz.gson.GsonUtils
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +31,7 @@ class GithubRepository(
 ) {
     val config = PagingConfig(
         pageSize = NETWORK_PAGE_SIZE,
-//        initialLoadSize = NETWORK_PAGE_SIZE,
+        initialLoadSize = NETWORK_PAGE_SIZE,
         enablePlaceholders = false
     )
 
@@ -109,6 +110,7 @@ class GithubRepository(
                         repoDatabase.remoteKeysDao().insertAll(keys)
                         repoDatabase.reposDao().insertAll(repos)
                     }
+                    dLog {  "RemotePagingSource >>>endOfPaginationReached:$endOfPaginationReached" }
                     return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
                 } catch (exception: IOException) {
                     exception.printStackTrace()
@@ -170,7 +172,7 @@ class GithubRepository(
                 val initialLoadSize = config.initialLoadSize
 //                val response = service.requestData(apiQuery, currentPage, loadSize)
                 val response = service.requestLocalData()
-                Logcat.writeLog("RemotePagingSource", " >>>response = ${GsonUtils.toJson(response)}")
+                Logcat.writeLog("RemotePagingSource", " >>>response.size = ${response?.items?.size?:0}")
                 val totalPage = calTotalPage(response?.total ?: 0, loadSize)
                 val curTotalSize = currentPage * loadSize
                 val maxSize = config.maxSize

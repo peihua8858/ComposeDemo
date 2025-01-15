@@ -142,7 +142,7 @@ private val UiModel.RepoItem.roundedStarCount: Int
 
 private const val LAST_QUERY_SCROLLED: String = "last_query_scrolled"
 private const val LAST_SEARCH_QUERY: String = "last_search_query"
-private const val DEFAULT_QUERY = "iOS"
+private const val DEFAULT_QUERY = "coai"
 
 /**
  * Factory for ViewModels

@@ -2,7 +2,7 @@ package com.android.composedemo.GitHub.api
 
 import android.annotation.SuppressLint
 import com.android.composedemo.ComposeDemoApp
-import com.android.composedemo.GitHub.RetrofitClient.Companion.getClient
+import com.android.composedemo.GitHub.RetrofitClient
 import com.android.composedemo.GitHub.api.GithubService.Companion.HOST
 import com.android.composedemo.utils.Logcat
 import com.fz.gson.GsonUtils
@@ -12,14 +12,16 @@ import java.io.InputStreamReader
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
+import kotlin.random.Random
+import kotlin.random.asJavaRandom
 
 @JvmDefaultWithoutCompatibility
 interface GithubService {
     companion object {
         const val HOST = "https://api.github.com/"
         fun create(): GithubService {
-//            return RetrofitClient.getClient(HOST).create(GithubService::class.java)
-            return createProxy(GithubService::class.java)
+            return RetrofitClient.getClient(HOST).create(GithubService::class.java)
+//            return createProxy(GithubService::class.java)
         }
     }
 
@@ -34,7 +36,11 @@ interface GithubService {
         ComposeDemoApp.getAPP().assets.open("GithubData.json").use {
             val response: RepoSearchResponse? =
                 GsonUtils.fromJson(InputStreamReader(it), RepoSearchResponse::class.java)
-            Logcat.writeLog("RemotePagingSource", " >>>it = ${GsonUtils.toJson(response)}")
+            val random =Random.asJavaRandom()
+            response?.items?.forEach {item->
+                item.id = random.nextInt(999999999).toLong()
+            }
+            Logcat.writeLog("RemotePagingSource", " >>>response.size = ${response?.items?.size?:0}")
             return response
         }
     }
@@ -46,9 +52,7 @@ interface GithubService {
 
 @SuppressLint("NewApi")
 fun <T> createProxy(service: Class<T>): T {
-    val serviceMethod = getClient(HOST).create(
-        service
-    )
+    val serviceMethod = RetrofitClient.getClient(HOST).create(service)
     return Proxy.newProxyInstance(
         service.classLoader,
         arrayOf<Class<*>>(service),

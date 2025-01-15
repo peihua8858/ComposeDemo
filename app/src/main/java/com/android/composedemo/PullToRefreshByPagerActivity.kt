@@ -55,47 +55,53 @@ class PullToRefreshByPagerActivity : BaseActivity() {
     }
 
     @Composable
-    @ExperimentalMaterial3Api
     override fun ContentView(modifier: Modifier) {
-        val items = mViewModel.data.collectAsLazyPagingItems()
-        val refreshing =
-            rememberPullToRefreshState(isRefreshing = items.loadState.refresh is LoadState.Loading)
-        val lazyListState = rememberLazyListState()
-        PullToRefresh(
-            state = refreshing,
-            onRefresh = {
-                items.refresh()
-            },
-            modifier = modifier
-        ) {
-            if (items.loadState.refresh is LoadState.Loading) {
-                if (items.itemCount == 0) {
-                    LoadingView(Modifier)
-                }
-            } else if (items.loadState.refresh is LoadState.Error) {
-                if (items.itemCount == 0) {
-                    ErrorView(Modifier)
-                } else {
-                    showToast("刷新失败")
-                }
+        Paging3ContentView(modifier, mViewModel)
+    }
+}
+
+@Composable
+//@ExperimentalMaterial3Api
+ fun BaseActivity.Paging3ContentView(modifier: Modifier, viewModel: DemoHomeViewModel) {
+    val items = viewModel.data.collectAsLazyPagingItems()
+    val refreshing =
+        rememberPullToRefreshState(isRefreshing = items.loadState.refresh is LoadState.Loading)
+    val lazyListState = rememberLazyListState()
+    PullToRefresh(
+        state = refreshing,
+        onRefresh = {
+            items.refresh()
+        },
+        modifier = modifier
+    ) {
+        if (items.loadState.refresh is LoadState.Loading) {
+            if (items.itemCount == 0) {
+                LoadingView(Modifier)
             }
-            val loadMoreState = items.loadState.append
-            BindingListView(Modifier, items, lazyListState) {
-                item {
-                    if (loadMoreState is LoadState.Error) {
-                        Text("Error loading more: ${loadMoreState.error.localizedMessage}")
-                    } else if (loadMoreState.endOfPaginationReached.not()) {
-                        Box(modifier = Modifier.fillMaxWidth()) {
-                            CircularProgressIndicator(
-                                modifier = Modifier
-                                    .align(Alignment.Center)
-                                    .padding(dimensionResource(R.dimen.dp_16))
-                            )
-                        }
+        } else if (items.loadState.refresh is LoadState.Error) {
+            if (items.itemCount == 0) {
+                ErrorView(Modifier)
+            } else {
+                showToast("刷新失败")
+            }
+        }
+        val loadMoreState = items.loadState.append
+        BindingListView(Modifier, items, lazyListState) {
+            item {
+                if (loadMoreState is LoadState.Error) {
+                    Text("Error loading more: ${loadMoreState.error.localizedMessage}")
+                } else if (loadMoreState.endOfPaginationReached.not()) {
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .padding(dimensionResource(R.dimen.dp_16))
+                        )
                     }
                 }
             }
-            // 自动加载下一页逻辑
+        }
+        // 自动加载下一页逻辑
 //            LaunchedEffect(lazyListState) {
 //                snapshotFlow { lazyListState.layoutInfo }
 //                    .collect { layoutInfo ->
@@ -122,89 +128,72 @@ class PullToRefreshByPagerActivity : BaseActivity() {
 //                        }
 //                    }
 //            }
-        }
     }
+}
 
-    @Composable
-    private fun ErrorView(modifier: Modifier.Companion) {
-        Box(modifier = modifier.fillMaxSize()) {
-            val painter = rememberAsyncImagePainter(
-                ImageRequest.Builder(LocalContext.current)
-                    .data(data = R.mipmap.ic_no_data_found)
-                    .build()
-            )
-            Image(
-                painter = painter,
-                contentDescription = "",
-                modifier = modifier
-                    .align(Alignment.Center)
-            )
-        }
-    }
 
-    @Composable
-    fun LoadingView(modifier: Modifier) {
-        Box(modifier = modifier.fillMaxSize()) {
-            val painter = rememberAsyncImagePainter(
-                ImageRequest.Builder(LocalContext.current)
-                    .data(data = R.mipmap.ic_loading1)
-                    .build()
-            )
-            val transition = rememberInfiniteTransition(label = "")
-            val progress by transition.animateValue(
-                0f,
-                1f,
-                Float.VectorConverter,
-                infiniteRepeatable(
-                    animation = tween(
-                        durationMillis = 1332,
-                        easing = LinearEasing
-                    )
-                ), label = ""
-            )
-            Image(
-                painter = painter,
-                contentDescription = "",
-                modifier = modifier
-                    .align(Alignment.Center)
-                    .rotate(progress * 360),
-            )
-        }
-    }
+//@Composable
+//fun LoadingView(modifier: Modifier) {
+//    Box(modifier = modifier.fillMaxSize()) {
+//        val painter = rememberAsyncImagePainter(
+//            ImageRequest.Builder(LocalContext.current)
+//                .data(data = R.mipmap.ic_loading1)
+//                .build()
+//        )
+//        val transition = rememberInfiniteTransition(label = "")
+//        val progress by transition.animateValue(
+//            0f,
+//            1f,
+//            Float.VectorConverter,
+//            infiniteRepeatable(
+//                animation = tween(
+//                    durationMillis = 1332,
+//                    easing = LinearEasing
+//                )
+//            ), label = ""
+//        )
+//        Image(
+//            painter = painter,
+//            contentDescription = "",
+//            modifier = modifier
+//                .align(Alignment.Center)
+//                .rotate(progress * 360),
+//        )
+//    }
+//}
 
-    @Composable
-    private fun BindingListView(
-        modifier: Modifier,
-        data: LazyPagingItems<AdapterBean<*>>,
-        state: LazyListState = rememberLazyListState(),
-        composeLoadMore: LazyListScope.() -> Unit
-    ) {
-        LazyColumn(modifier = modifier.fillMaxSize(), state = state) {
-            items(items = data) { message ->
-                val itemData = message?.data as? ModuleBean ?: return@items
-                when (message.itemType) {
-                    Constants.TYPE_TITLE -> {
-                        TitleItemView(module = itemData)
-                    }
+@Composable
+private fun BaseActivity.BindingListView(
+    modifier: Modifier,
+    data: LazyPagingItems<AdapterBean<*>>,
+    state: LazyListState = rememberLazyListState(),
+    composeLoadMore: LazyListScope.() -> Unit
+) {
+    LazyColumn(modifier = modifier.fillMaxSize(), state = state) {
+        items(items = data) { message ->
+            val itemData = message?.data as? ModuleBean ?: return@items
+            when (message.itemType) {
+                Constants.TYPE_TITLE -> {
+                    TitleItemView(module = itemData)
+                }
 
-                    Constants.TYPE_ITEM -> {
-                        HomeItemView(module = itemData)
-                    }
+                Constants.TYPE_ITEM -> {
+                    HomeItemView(module = itemData)
+                }
 
-                    Constants.TYPE_BANNER -> {
-                        BannerView(module = itemData)
-                    }
+                Constants.TYPE_BANNER -> {
+                    BannerView(module = itemData)
+                }
 
-                    Constants.TYPE_AI_BANNER -> {
-                        AiBannerView(module = itemData)
-                    }
+                Constants.TYPE_AI_BANNER -> {
+                    AiBannerView(module = itemData)
+                }
 
-                    Constants.TYPE_POST_BANNER -> {
-                        PostBannerView(module = itemData)
-                    }
+                Constants.TYPE_POST_BANNER -> {
+                    PostBannerView(module = itemData)
                 }
             }
-            composeLoadMore()
         }
+        composeLoadMore()
     }
 }

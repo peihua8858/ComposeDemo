@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "repos")
 data class Repo(
-    @PrimaryKey @field:SerializedName("id") val id: Long,
+    @PrimaryKey @field:SerializedName("id") var id: Long,
     @field:SerializedName("name") val name: String,
     @field:SerializedName("full_name") val fullName: String,
     @field:SerializedName("description") val description: String?,
