@@ -3,6 +3,7 @@ package com.android.composedemo
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.material3.TabPosition
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.android.composedemo.GitHub.GithubContentView
@@ -24,6 +25,11 @@ class TabPagerViewActivity : TabLayoutActivity<String>() {
         mTabs.add("Github")
         this.mTabs.addAll(mTabs)
         mViewModel.requestHomeData2(1)
+    }
+
+    @Composable
+    override fun TabIndicator(tabPositions: List<TabPosition>, pagerState: PagerState) {
+//        super.TabIndicator(tabPositions, pagerState)
     }
 
     @Composable
