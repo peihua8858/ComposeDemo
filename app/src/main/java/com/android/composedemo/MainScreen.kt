@@ -67,6 +67,7 @@ import com.android.composedemo.ui.theme.DemoFontFamily
 import com.android.composedemo.utils.dimensionResourceByPx
 import com.android.composedemo.utils.ellipsize
 import com.android.composedemo.utils.getDimension
+import com.android.composedemo.utils.jumpTarget
 import com.android.composedemo.utils.loadCircleAvatar
 import com.android.composedemo.utils.subListToLines
 import com.android.composedemo.widgets.CircleImageView
@@ -208,12 +209,13 @@ fun HomeItemView(modifier: Modifier = Modifier, module: ModuleBean) {
  */
 @Composable
 fun ItemView(modifier: Modifier = Modifier, item: Data) {
+    val context= LocalContext.current
     Row(modifier = modifier
         .height(dimensionResource(id = R.dimen.dp_68))
         .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.dp_10)))
         .background(color = colorResource(id = R.color.white))
         .clickable {
-
+            context.jumpTarget(item.actionUrl)
         }) {
         Box(
             modifier = Modifier

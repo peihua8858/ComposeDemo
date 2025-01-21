@@ -79,7 +79,7 @@ android {
 
 dependencies {
 
-    implementation (libs.kotlin.reflect)
+    implementation(libs.kotlin.reflect)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -106,7 +106,7 @@ dependencies {
     implementation(libs.gson)
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
-    implementation ("androidx.room:room-paging:2.6.1")
+    implementation("androidx.room:room-paging:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
 //    implementation("androidx.paging:paging-runtime:3.3.5")
     implementation("androidx.paging:paging-compose:3.3.5")
@@ -115,6 +115,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 //    implementation("com.github.franmontiel:PersistentCookieJar:v1.0.1")
+    debugImplementation("com.example.flutter_module:flutter_debug:1.0")
 }
 //tasks.withType(KotlinCompile::class).all {
 //    kotlinOptions {

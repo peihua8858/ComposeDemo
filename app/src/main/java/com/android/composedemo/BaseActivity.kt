@@ -106,7 +106,7 @@ abstract class BaseActivity : ComponentActivity() {
                     Box(modifier = Modifier.fillMaxSize()) {
                         ContentView(Modifier.padding(innerPadding))
                         if (isShowDialog.value) {
-                            MarketAlertDialog(
+                            showAlertDialog(
                                 dialogTitle = "标题",
                                 dialogText = "弹窗内容",
                                 onDismissRequest = {
@@ -128,7 +128,7 @@ abstract class BaseActivity : ComponentActivity() {
 }
 
 @Composable
-fun MarketAlertDialog(
+fun showAlertDialog(
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
     dialogTitle: String,

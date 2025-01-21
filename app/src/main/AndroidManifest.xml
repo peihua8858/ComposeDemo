@@ -29,6 +29,10 @@
         <activity
             android:name=".SecondActivity"
             android:configChanges="keyboard|keyboardHidden|uiMode|mcc|mnc|navigation|orientation|screenSize|screenLayout|smallestScreenSize" />
+
+        <activity
+            android:name="io.flutter.embedding.android.FlutterActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize" />
     </application>
 
 </manifest>

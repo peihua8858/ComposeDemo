@@ -44,7 +44,7 @@ abstract class TabLayoutActivity<T : Any> : BaseActivity() {
         ) { mTabs.size }
         Column(modifier = modifier) {
             tabLayout(Modifier, pagerState, {
-                tabIndicator(tabPositions = it, pagerState = pagerState)
+                tabIndicator(it, pagerState)
             }) {
                 mTabs.forEachIndexed { index, item ->
                     TabView(
@@ -59,7 +59,6 @@ abstract class TabLayoutActivity<T : Any> : BaseActivity() {
                     }
                 }
             }
-//            TabLayout(modifier = Modifier, pagerState = pagerState)
             HorizontalPager(state = pagerState, modifier = Modifier) {
                 PageContent(
                     modifier = Modifier
