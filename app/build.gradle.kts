@@ -115,7 +115,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 //    implementation("com.github.franmontiel:PersistentCookieJar:v1.0.1")
-    debugImplementation("com.example.flutter_module:flutter_debug:1.0")
+    implementation("com.example.flutter_module:flutter_debug:1.0")
 }
 //tasks.withType(KotlinCompile::class).all {
 //    kotlinOptions {
