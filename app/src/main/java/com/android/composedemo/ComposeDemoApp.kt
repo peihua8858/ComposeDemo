@@ -21,6 +21,7 @@ class ComposeDemoApp : Application() {
             private set
         const val TAG = "ComposeDemoApp";
         lateinit var context: Context
+        @JvmStatic
         fun getAPP(): ComposeDemoApp {
             return instance;
         }

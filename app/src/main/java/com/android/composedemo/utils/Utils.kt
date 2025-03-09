@@ -4,22 +4,20 @@
 package com.android.composedemo.utils
 
 import android.content.Context
-import android.os.Build
 import android.os.Looper
 import androidx.core.text.TextUtilsCompat
 import androidx.core.view.ViewCompat
 import kotlinx.coroutines.delay
-import java.io.IOException
-import java.util.*
+import java.util.Locale
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 fun Any?.isMainThread(): Boolean {
-    return Looper.myLooper() == Looper.getMainLooper()
+    return Looper.myLooper() === Looper.getMainLooper()
 }
 
-fun isMainThread(): Boolean {
-    return Looper.myLooper() == Looper.getMainLooper()
+fun Any?.isWorkThread(): Boolean {
+    return Looper.myLooper() !== Looper.getMainLooper()
 }
 
 fun Any?.checkMainThread(msg: String?): Boolean {
@@ -29,6 +27,19 @@ fun Any?.checkMainThread(msg: String?): Boolean {
     throw IllegalStateException(msg)
 }
 
+fun Any?.checkMainThread(msg: () -> String): Boolean {
+    if (isMainThread()) {
+        return true
+    }
+    throw IllegalStateException(msg())
+}
+
+fun Any?.checkWorkThread(msg: () -> String): Boolean {
+    if (isWorkThread()) {
+        return true
+    }
+    throw IllegalStateException(msg())
+}
 
 /**
  * 布局方向是从右到左
@@ -73,7 +84,8 @@ fun Locale?.isAppLtr(): Boolean {
 fun Any?.isAppLtr(local: Locale?): Boolean {
     return TextUtilsCompat.getLayoutDirectionFromLocale(local) == ViewCompat.LAYOUT_DIRECTION_LTR
 }
-fun Context.isRtl():Boolean{
+
+fun Context.isRtl(): Boolean {
     if (isN) {
         return resources.configuration.locales.get(0).isAppRtl()
     }

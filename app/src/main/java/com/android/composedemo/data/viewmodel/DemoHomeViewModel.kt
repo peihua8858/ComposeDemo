@@ -65,6 +65,10 @@ class DemoHomeViewModel : ViewModel() {
      * 请求首页数据
      */
     val modelState = MutableLiveData<ResultData<MutableList<AdapterBean<*>>>>()
+    /**
+     * 请求首页数据
+     */
+    val modelState1 = MutableLiveData<ResultData<MutableList<AdapterBean<*>>>>()
     private val fileNames = mutableListOf("render_data.json", "render_data2.json")
 
     suspend fun requestPagingData(pageSize: Int): MutableList<AdapterBean<*>> {
@@ -130,6 +134,14 @@ class DemoHomeViewModel : ViewModel() {
      */
     fun requestHomeData() {
         request(modelState) {
+            requestPagingData(0)
+        }
+    }
+    /**
+     * 请求首页数据
+     */
+    fun requestHomeData1() {
+        request(modelState1) {
             requestPagingData(0)
         }
     }

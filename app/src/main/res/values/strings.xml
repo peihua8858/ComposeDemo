@@ -18,5 +18,5 @@
     <string name="cptr_loading">加载中…</string>
     <string name="text_config">确定</string>
     <string name="text_cancel">取消</string>
-
+    <string name="language">语言: %s</string>
 </resources>

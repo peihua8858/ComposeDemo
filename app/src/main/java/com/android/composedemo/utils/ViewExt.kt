@@ -24,6 +24,7 @@ fun View.setMarginTop(@Px marginTop: Int) {
     lp.topMargin = marginTop
     layoutParams = lp
 }
+
 fun View.setMarginStart(@Px marginStart: Int) {
     var lp = layoutParams as? MarginLayoutParams
     if (lp == null) {
@@ -35,6 +36,7 @@ fun View.setMarginStart(@Px marginStart: Int) {
     lp.marginStart = marginStart
     layoutParams = lp
 }
+
 fun View.setMarginEnd(@Px end: Int) {
     var lp = layoutParams as? MarginLayoutParams
     if (lp == null) {
@@ -46,6 +48,7 @@ fun View.setMarginEnd(@Px end: Int) {
     lp.marginEnd = end
     layoutParams = lp
 }
+
 fun View.setMargin(
     @Px marginStart: Int,
     @Px marginTop: Int,

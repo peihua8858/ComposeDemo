@@ -36,82 +36,92 @@ import com.android.composedemo.widgets.pullrefreshlayout.rememberPullToRefreshSt
  */
 class PullToRefreshViewActivity : BaseActivity() {
     private val mViewModel by viewModels<DemoHomeViewModel>()
-    private val mLoading = mutableStateOf(true)
-    private val modelState3 = mutableStateListOf<AdapterBean<*>>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         title = "Compose Demo"
-        mViewModel.requestHomeData()
+//        mViewModel.requestHomeData()
     }
 
     @Composable
     @ExperimentalMaterial3Api
     override fun ContentView(modifier: Modifier) {
-        var refreshing by remember { mutableStateOf(true) }
-        mViewModel.modelState.observe(this) {
-            if (it.isSuccess()) {
-                mLoading.value = false
-                modelState3.addAll(it.data)
-                refreshing = false
-            } else if (it.isError()) {
-                refreshing = false
-                mLoading.value = false
-            }
-        }
-        // 使用 LocalConfiguration 获取当前配置
-        PullToRefresh(
-            state = rememberPullToRefreshState(isRefreshing = refreshing),
-            onRefresh = {
-                refreshing = true
-                mViewModel.requestHomeData()
-            },
-            modifier = modifier
-        ) {
-            if (mLoading.value) {
-                LoadingView(Modifier)
-            } else {
-                BindingListView(Modifier)
-            }
-        }
+        RefreshViewScreen(modifier, mViewModel)
     }
-
-    @Composable
-    fun LoadingView(modifier: Modifier) {
-        Box(modifier = modifier.fillMaxSize()) {
-            val painter = rememberAsyncImagePainter(
-                ImageRequest.Builder(LocalContext.current)
-                    .data(data = R.mipmap.ic_loading1)
-                    .build()
-            )
-            val transition = rememberInfiniteTransition(label = "")
-            val progress by transition.animateValue(
-                0f,
-                1f,
-                Float.VectorConverter,
-                infiniteRepeatable(
-                    animation = tween(
-                        durationMillis = 1332,
-                        easing = LinearEasing
-                    )
-                ), label = ""
-            )
-            Image(
-                painter = painter,
-                contentDescription = "",
-                modifier = modifier
-                    .align(Alignment.Center)
-                    .rotate(progress * 360),
-            )
-        }
-    }
-
-    @Composable
-    private fun BindingListView(modifier: Modifier) {
-        MarketListView(
-            modifier.fillMaxSize(),
-            modelState3
-        )
-    }
-
 }
 
+@Composable
+fun BaseActivity.RefreshViewScreen(
+    modifier: Modifier,
+    viewModel: DemoHomeViewModel,
+) {
+    var refreshing by remember { mutableStateOf(true) }
+    val mLoading = remember { mutableStateOf(true) }
+    val modelState3 = remember { mutableStateListOf<AdapterBean<*>>() }
+    viewModel.modelState.observe(this) {
+        if (it.isSuccess()) {
+            mLoading.value = false
+            modelState3.addAll(it.data)
+            refreshing = false
+        } else if (it.isError()) {
+            refreshing = false
+            mLoading.value = false
+        }
+    }
+    // 使用 LocalConfiguration 获取当前配置
+    PullToRefresh(
+        state = rememberPullToRefreshState(isRefreshing = refreshing),
+        onRefresh = {
+            refreshing = true
+            viewModel.requestHomeData()
+        },
+        modifier = modifier
+    ) {
+        if (mLoading.value) {
+            LoadingView(Modifier)
+            viewModel.requestHomeData()
+        } else {
+            BindingListView(Modifier, modelState3)
+        }
+    }
+}
+
+@Composable
+fun LoadingView(modifier: Modifier) {
+    Box(modifier = modifier.fillMaxSize()) {
+        val painter = rememberAsyncImagePainter(
+            ImageRequest.Builder(LocalContext.current)
+                .data(data = R.mipmap.ic_loading1)
+                .build()
+        )
+        val transition = rememberInfiniteTransition(label = "")
+        val progress by transition.animateValue(
+            0f,
+            1f,
+            Float.VectorConverter,
+            infiniteRepeatable(
+                animation = tween(
+                    durationMillis = 1332,
+                    easing = LinearEasing
+                )
+            ), label = ""
+        )
+        Image(
+            painter = painter,
+            contentDescription = "",
+            modifier = modifier
+                .align(Alignment.Center)
+                .rotate(progress * 360),
+        )
+    }
+}
+
+@Composable
+private fun BaseActivity.BindingListView(
+    modifier: Modifier,
+    modelState3: MutableList<AdapterBean<*>>
+) {
+    MarketListView(
+        modifier.fillMaxSize(),
+        modelState3
+    )
+}

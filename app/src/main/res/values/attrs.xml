@@ -135,4 +135,60 @@
         <attr name="civ_inner_border_width" format="dimension" />
         <attr name="civ_inner_border_color" format="color" />
     </declare-styleable>
+
+    <declare-styleable name="FlexBoxLayout">
+        <attr name="columns" format="integer"/>
+        <attr name="rows" format="integer"/>
+        <attr name="spanH" format="dimension"/>
+        <attr name="spanV" format="dimension"/>
+        <attr name="autoGap" format="boolean"/>
+        <attr name="autoWidth" format="boolean"/>
+    </declare-styleable>
+    <declare-styleable name="TransparentCenterLinearLayout">
+        <attr name="rll_type" format="enum">
+            <enum name="oval" value="2" />
+            <enum name="round" value="1" />
+            <enum name="circle" value="0" />
+        </attr>
+        <attr name="rll_radius" format="dimension" />
+        <attr name="rll_backgroundColor" format="color" />
+    </declare-styleable>
+    <declare-styleable name="FixedMaxSizeLinearLayout">
+        <attr name="android:maxHeight" />
+        <attr name="android:maxWidth" />
+    </declare-styleable>
+    <declare-styleable name="FontWeightSpanTextView">
+        <!--    开始位置的字符    -->
+        <attr name="fw_startChar" format="string" />
+        <!--    结束位置的字符    -->
+        <attr name="fw_endChar" format="string" />
+        <!--    起始字符之间的文字颜色    -->
+        <attr name="fw_textColor" format="color|reference" />
+        <!--    起始字符之间的文字字重    -->
+        <attr name="fw_fontWeight" format="integer" />
+        <!--    起始字符之间的文字大小    -->
+        <attr name="fw_textSize" format="dimension|reference" />
+        <!--    true 将改变起始字符的颜色、字重、大小    -->
+        <attr name="fw_changedChar" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="RadioCompoundGroup">
+        <attr name="android:checkedButton" />
+    </declare-styleable>
+    <declare-styleable name="RadioCompoundButton">
+        <attr name="android:button" format="reference" />
+        <attr name="android:checked" format="boolean" />
+        <attr name="android:drawablePadding" />
+        <attr name="buttonWidth" format="dimension|reference" />
+        <attr name="buttonHeight" format="dimension|reference" />
+        <attr name="direction" format="enum">
+            <enum name="before" value="1" />
+            <enum name="after" value="2" />
+        </attr>
+        <attr name="android:showText" />
+        <attr name="android:text" />
+        <attr name="android:textColor" />
+        <attr name="android:textSize" />
+        <attr name="android:textFontWeight" />
+        <attr name="android:textAppearance" />
+    </declare-styleable>
 </resources>

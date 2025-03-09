@@ -3,6 +3,7 @@
 
 package com.android.composedemo.utils
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
@@ -22,7 +23,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.fontscaling.FontScaleConverterFactory
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.fastRoundToInt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
@@ -112,6 +118,7 @@ val View.screenHeight: Int
 fun ViewBinding.getDimensionPixelSize(id: Int): Int {
     return root.resources.getDimensionPixelSize(id)
 }
+
 fun Context.getDimensionPixelSize(id: Int): Int {
     return resources.getDimensionPixelSize(id)
 }
@@ -123,12 +130,14 @@ fun Context.getDimension(id: Int): Float {
 fun ViewBinding.getDimension(id: Int): Float {
     return root.resources.getDimension(id)
 }
+
 fun ViewBinding.getDrawableCompat(@DrawableRes id: Int): Drawable? {
     if (id == 0) {
         return null
     }
     return ContextCompat.getDrawable(root.context, id)
 }
+
 fun Context.getDrawableCompat(@DrawableRes id: Int): Drawable? {
     if (id == 0) {
         return null
@@ -146,20 +155,55 @@ fun dimensionResourceByPx(@DimenRes id: Int): Float {
 
 @Composable
 @ReadOnlyComposable
-fun Int.px2Dp(): Dp {
-    val density = LocalDensity.current
-    return Dp(this / density.density)
-}
-@Composable
-@ReadOnlyComposable
-fun Float.px2Dp(): Dp {
+fun Int.toDp(): Dp {
     val density = LocalDensity.current
     return Dp(this / density.density)
 }
 
 @Composable
 @ReadOnlyComposable
-fun Dp.dp2Px(): Float {
+fun Float.toDp(): Dp {
+    val density = LocalDensity.current
+    return Dp(this / density.density)
+}
+
+@Composable
+fun Int.toSp(): TextUnit {
+    return toDp().toSp()
+
+}
+
+@Composable
+fun Float.toSp(): TextUnit {
+    return toDp().toSp()
+}
+
+@Composable
+@ReadOnlyComposable
+fun Dp.toPx(): Float {
     val density = LocalDensity.current
     return (this.value * density.density)
 }
+
+@Composable
+fun Dp.roundToPx(): Int {
+    val px = toPx()
+    return if (px.isInfinite()) Constraints.Infinity else px.fastRoundToInt()
+}
+
+private const val MinScaleForNonLinear = 1.03f
+
+
+@SuppressLint("RestrictedApi")
+@Composable
+@ReadOnlyComposable
+fun Dp.toSp(): TextUnit {
+    val density = LocalDensity.current
+    val fontScale = density.fontScale
+    if (!(fontScale >= MinScaleForNonLinear)) {
+        return (value / fontScale).sp
+    }
+    val converter = FontScaleConverterFactory.forScale(fontScale)
+    return (converter?.convertDpToSp(value) ?: (value / fontScale)).sp
+}
+
