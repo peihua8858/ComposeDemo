@@ -170,8 +170,8 @@ class GithubRepository(
                 val loadSize = params.loadSize
                 val apiQuery = "$query $IN_QUALIFIER"
                 val initialLoadSize = config.initialLoadSize
-//                val response = service.requestData(apiQuery, currentPage, loadSize)
-                val response = service.requestLocalData()
+                val response = service.requestData(apiQuery, currentPage, loadSize)
+//                val response = service.requestLocalData()
                 Logcat.writeLog("RemotePagingSource", " >>>response.size = ${response?.items?.size?:0}")
                 val totalPage = calTotalPage(response?.total ?: 0, loadSize)
                 val curTotalSize = currentPage * loadSize

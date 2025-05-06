@@ -1,5 +1,6 @@
 package com.android.composedemo.utils
 
+import android.content.Context
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -195,4 +196,17 @@ fun View.getString(@StringRes id: Int): String {
 
 fun ViewGroup.getItemView(layoutRes: Int): View {
     return LayoutInflater.from(context).inflate(layoutRes, this, false)
+}
+
+fun View.dp2px(dp: Float): Float {
+    return dp * resources.displayMetrics.density
+}
+fun View.px2dp(px: Float): Float {
+    return px / resources.displayMetrics.density
+}
+fun View.sp2px(sp: Float): Float {
+    return sp * resources.displayMetrics.scaledDensity
+}
+fun View.px2sp(px: Float): Float {
+    return px / resources.displayMetrics.scaledDensity
 }

@@ -191,4 +191,24 @@
         <attr name="android:textFontWeight" />
         <attr name="android:textAppearance" />
     </declare-styleable>
+
+    <declare-styleable name="LyricTextView">
+        <attr name="text" format="string" />
+        <attr name="text_size" format="dimension" />
+        <attr name="default_color" format="color|reference" />
+        <attr name="changed_color" format="color|reference" />
+        <attr name="progress" format="float" />
+        <attr name="ltv_direction">
+            <enum name="left" value="0" />
+            <enum name="right" value="1" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="LrcView">
+        <attr name="lrcMode" format="enum">
+            <enum name="KARAOKE" value="1"/>
+        </attr>
+        <attr name="hignLineColor" format="color|reference"/>
+        <attr name="lrcColor" format="color|reference"/>
+    </declare-styleable>
 </resources>

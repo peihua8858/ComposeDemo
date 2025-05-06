@@ -207,3 +207,16 @@ fun Dp.toSp(): TextUnit {
     return (converter?.convertDpToSp(value) ?: (value / fontScale)).sp
 }
 
+fun Context.dp2px(dp: Float): Float {
+    return dp * resources.displayMetrics.density
+}
+fun Context.px2dp(px: Float): Float {
+    return px / resources.displayMetrics.density
+}
+fun Context.sp2px(sp: Float): Float {
+    return sp * resources.displayMetrics.scaledDensity
+}
+fun Context.px2sp(px: Float): Float {
+    return px / resources.displayMetrics.scaledDensity
+}
+

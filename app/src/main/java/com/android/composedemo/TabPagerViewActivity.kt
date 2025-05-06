@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.android.composedemo.GitHub.GithubContentView
 import com.android.composedemo.GitHub.viewmodel.GithubViewModel
+import com.android.composedemo.compose.SongTextContentView
 import com.android.composedemo.data.viewmodel.DemoHomeViewModel
 
 class TabPagerViewActivity : TabLayoutActivity<String>() {
@@ -22,6 +23,7 @@ class TabPagerViewActivity : TabLayoutActivity<String>() {
         mTabs.add("Paging3 Staggered Grid")
         mTabs.add("Paging3 List")
         mTabs.add("Github")
+        mTabs.add("SongText")
         this.mTabs.addAll(mTabs)
         mViewModel.requestHomeData2(1)
     }
@@ -36,6 +38,7 @@ class TabPagerViewActivity : TabLayoutActivity<String>() {
             4 -> Paging3StaggeredGridContentView(modifier, mViewModel)
             5 -> Paging3ContentView(modifier, mViewModel)
             6 -> GithubContentView(modifier, mGithubViewModel)
+            7 -> SongTextContentView(modifier)
         }
     }
 }

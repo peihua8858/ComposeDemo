@@ -98,8 +98,6 @@ dependencies {
 //    implementation("com.google.accompanist:accompanist-glide:0.10.0")
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.flexbox)
-    implementation(libs.androidx.core.ktx.v180)
-    implementation(libs.androidx.lifecycle.runtime.ktx.v261)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.recyclerview)
     implementation(libs.glide)
@@ -116,6 +114,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 //    implementation("com.github.franmontiel:PersistentCookieJar:v1.0.1")
     implementation("com.example.flutter_module:flutter_debug:1.0")
+    implementation("com.google.accompanist:accompanist-permissions:0.37.2")
 }
 //tasks.withType(KotlinCompile::class).all {
 //    kotlinOptions {
