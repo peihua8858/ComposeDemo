@@ -11,6 +11,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.android.composedemo.utils.dLog
 import com.android.composedemo.widgets.lrc.DefaultLrcBuilder
 import com.android.composedemo.widgets.lrc.ILrcBuilder
+import com.android.composedemo.widgets.lrc.LrcView
 import com.android.composedemo.widgets.lrc.LrcView2
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -64,18 +65,18 @@ fun TextSongView(modifier: Modifier) {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
-            LrcView2(it).apply {
+            LrcView(it).apply {
                 val builder: ILrcBuilder = DefaultLrcBuilder()
                 val rows = builder.getLrcRows(it.readAssetLrc())
-                setLrc(rows)
-                setNormalRowColor(0xFF000000.toInt())
-                setHighlightRowColor(0xFF0000FF.toInt())
-                setSeekLineColor(0xFF0000FF.toInt())
+                setLrc(it.readAssetLrc())
+//                setNormalRowColor(0xFF000000.toInt())
+//                setHighlightRowColor(0xFF0000FF.toInt())
+//                setSeekLineColor(0xFF0000FF.toInt())
                 layoutParams = params
                 scope.launch {
                     while (true) {
                         dLog { "currentMillis:$currentMillis" }
-                        seekLrcToTime(currentMillis)
+                        setCurrentPlayerMillis(currentMillis)
                         delay(30)
                         if (currentMillis > 280000) {
                             currentMillis = 0

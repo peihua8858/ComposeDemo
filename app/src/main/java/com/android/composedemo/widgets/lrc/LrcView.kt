@@ -42,7 +42,7 @@ class LrcView @JvmOverloads constructor(
     private var highLineColor: Int = Color.RED
     private var lrcColor: Int = Color.BLACK
     private var mode = KARAOKE
-    private var currentPlayerMillis = -1
+    private var currentPlayerMillis = -1L
     private val mHTextHeight: Float
     private val mSTextHeight: Float
     private var mGap = 0f
@@ -63,7 +63,7 @@ class LrcView @JvmOverloads constructor(
         this.player = player
     }
 
-    fun setCurrentPlayerMillis(currentPlayerMillis: Int) {
+    fun setCurrentPlayerMillis(currentPlayerMillis: Long) {
         this.currentPlayerMillis = currentPlayerMillis
     }
 
@@ -124,7 +124,7 @@ class LrcView @JvmOverloads constructor(
         //        drawLrc1(canvas);
         var currentMillis = currentPlayerMillis
         if (currentMillis < 0) {
-            currentMillis = player?.getCurrentPosition() ?: 0
+            currentMillis = (player?.getCurrentPosition() ?: 0).toLong()
         }
 
         drawLrc2(canvas, currentMillis)
@@ -137,7 +137,7 @@ class LrcView @JvmOverloads constructor(
         postInvalidateDelayed(100)
     }
 
-    private fun drawLrc2(canvas: Canvas, currentMillis: Int) {
+    private fun drawLrc2(canvas: Canvas, currentMillis: Long) {
         val textHeight = mHTextHeight + mGap
         if (mode == 0) {
             for ((index, item) in list.withIndex()) {
@@ -157,7 +157,7 @@ class LrcView @JvmOverloads constructor(
             }
         }
     }
-    fun drawHighLine(canvas: Canvas, currentMillis: Int, textHeight: Float, item: LrcBean) {
+    fun drawHighLine(canvas: Canvas, currentMillis: Long, textHeight: Float, item: LrcBean) {
         val lrcContent = item.lrc
         val start = item.start
         val end = item.end
@@ -177,7 +177,7 @@ class LrcView @JvmOverloads constructor(
             var currentMillis = currentPlayerMillis
             if (currentMillis < 0) {
                 if (player != null) {
-                    currentMillis = player!!.currentPosition
+                    currentMillis = player!!.currentPosition.toLong()
                 }
             }
             if (currentMillis < list[0].start) {
