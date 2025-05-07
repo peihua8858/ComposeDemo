@@ -4,21 +4,17 @@ import android.content.Context
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import com.android.composedemo.utils.dLog
-import com.android.composedemo.utils.dp2px
-import com.android.composedemo.utils.sp2px
-import com.android.composedemo.widgets.LyricTextView
-import com.android.composedemo.widgets.SongTextView
-import com.android.composedemo.widgets.lrc.LrcView
+import com.android.composedemo.widgets.lrc.DefaultLrcBuilder
+import com.android.composedemo.widgets.lrc.ILrcBuilder
+import com.android.composedemo.widgets.lrc.LrcView2
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
 
 @Composable
 fun SongTextContentView(modifier: Modifier) {
@@ -29,7 +25,7 @@ fun SongTextContentView(modifier: Modifier) {
 fun TextSongView(modifier: Modifier) {
     val scope = rememberCoroutineScope()
     var process = 0f
-    var currentMillis = 0
+    var currentMillis = 0L
     Column(modifier = modifier/*.verticalScroll(rememberScrollState())*/) {
 //        AndroidView(modifier = Modifier, factory = {
 //            val params = ViewGroup.LayoutParams(
@@ -68,13 +64,18 @@ fun TextSongView(modifier: Modifier) {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
-            LrcView(it).apply {
-                setLrc(it.readAssetLrc())
+            LrcView2(it).apply {
+                val builder: ILrcBuilder = DefaultLrcBuilder()
+                val rows = builder.getLrcRows(it.readAssetLrc())
+                setLrc(rows)
+                setNormalRowColor(0xFF000000.toInt())
+                setHighlightRowColor(0xFF0000FF.toInt())
+                setSeekLineColor(0xFF0000FF.toInt())
                 layoutParams = params
                 scope.launch {
                     while (true) {
                         dLog { "currentMillis:$currentMillis" }
-                        setCurrentPlayerMillis(currentMillis)
+                        seekLrcToTime(currentMillis)
                         delay(30)
                         if (currentMillis > 280000) {
                             currentMillis = 0

@@ -16,6 +16,7 @@ class TabPagerViewActivity : TabLayoutActivity<String>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val mTabs = mutableListOf<String>()
+        mTabs.add("SongText")
         mTabs.add("Compose List")
         mTabs.add("Refresh List")
         mTabs.add("Smart Refresh")
@@ -23,7 +24,6 @@ class TabPagerViewActivity : TabLayoutActivity<String>() {
         mTabs.add("Paging3 Staggered Grid")
         mTabs.add("Paging3 List")
         mTabs.add("Github")
-        mTabs.add("SongText")
         this.mTabs.addAll(mTabs)
         mViewModel.requestHomeData2(1)
     }
@@ -31,14 +31,14 @@ class TabPagerViewActivity : TabLayoutActivity<String>() {
     @Composable
     override fun PageContent(modifier: Modifier, pagerState: PagerState, index: Int) {
         when (index) {
-            0 -> MarketListView(modifier, mViewModel.modelState3)
+            7 -> MarketListView(modifier, mViewModel.modelState3)
             1 -> RefreshViewScreen(modifier, mViewModel)
             2 -> SmartSwipeRefreshContentView(modifier, mViewModel)
             3 -> Paging3GridContentView(modifier, mViewModel)
             4 -> Paging3StaggeredGridContentView(modifier, mViewModel)
             5 -> Paging3ContentView(modifier, mViewModel)
             6 -> GithubContentView(modifier, mGithubViewModel)
-            7 -> SongTextContentView(modifier)
+            0 -> SongTextContentView(modifier)
         }
     }
 }

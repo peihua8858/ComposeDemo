@@ -1,57 +1,70 @@
-package com.android.composedemo.widgets.lrc;
+package com.android.composedemo.widgets.lrc
 
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.media.MediaPlayer;
-import android.util.AttributeSet;
-import android.view.View;
-
-import com.android.composedemo.R;
-import com.android.composedemo.utils.Logcat;
-
-import java.util.List;
+import android.animation.ValueAnimator
+import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
+import android.graphics.RectF
+import android.media.MediaPlayer
+import android.util.AttributeSet
+import android.view.View
+import androidx.core.content.withStyledAttributes
+import androidx.core.graphics.createBitmap
+import com.android.composedemo.R
+import com.android.composedemo.utils.Logcat
+import com.android.composedemo.utils.dLog
+import com.android.composedemo.utils.dp2px
+import com.android.composedemo.utils.toInt
+import com.fz.gson.GsonUtils
+import kotlin.math.ceil
+import kotlin.math.roundToInt
 
 /**
  * Created by 王松 on 2016/10/21.
  */
-
-public class LrcView extends View {
-
-    private List<LrcBean> list;
-    private Paint gPaint;
-    private Paint hPaint;
-    private int width = 0, height = 0;
-    private int currentPosition = 0;
-    private MediaPlayer player;
-    private int lastPosition = 0;
-    private int highLineColor;
-    private int lrcColor;
-    private int mode = 1;
-    public final static int KARAOKE = 1;
-    private int currentPlayerMillis = -1;
-
-    public void setHighLineColor(int highLineColor) {
-        this.highLineColor = highLineColor;
+class LrcView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+) : View(context, attrs, defStyleAttr) {
+    private var list: MutableList<LrcBean> = mutableListOf()
+    private val gPaint: Paint
+    private val sPaint: Paint
+    private val hPaint: Paint
+    private var width = 0
+    private var height = 0
+    private var currentPosition = 0
+    private var player: MediaPlayer? = null
+    private var lastPosition = 0
+    private var highLineColor: Int = Color.RED
+    private var lrcColor: Int = Color.BLACK
+    private var mode = KARAOKE
+    private var currentPlayerMillis = -1
+    private val mHTextHeight: Float
+    private val mSTextHeight: Float
+    private var mGap = 0f
+    private val xformode: PorterDuffXfermode
+    fun setHighLineColor(highLineColor: Int) {
+        this.highLineColor = highLineColor
     }
 
-    public void setLrcColor(int lrcColor) {
-        this.lrcColor = lrcColor;
+    fun setLrcColor(lrcColor: Int) {
+        this.lrcColor = lrcColor
     }
 
-    public void setMode(int mode) {
-        this.mode = mode;
+    fun setMode(mode: Int) {
+        this.mode = mode
     }
 
-    public void setPlayer(MediaPlayer player) {
-        this.player = player;
+    fun setPlayer(player: MediaPlayer?) {
+        this.player = player
     }
 
-    public void setCurrentPlayerMillis(int currentPlayerMillis) {
-        this.currentPlayerMillis = currentPlayerMillis;
+    fun setCurrentPlayerMillis(currentPlayerMillis: Int) {
+        this.currentPlayerMillis = currentPlayerMillis
     }
 
     /**
@@ -59,158 +72,190 @@ public class LrcView extends View {
      *
      * @param lrc
      */
-    public void setLrc(String lrc) {
-        list = LrcUtil.parseStr2List(lrc);
+    fun setLrc(lrc: String) {
+        list.clear()
+        list.addAll(LrcBean.create(lrc))
     }
 
-    public LrcView(Context context) {
-        this(context, null);
+    init {
+        context.withStyledAttributes(attrs, R.styleable.LrcView) {
+            highLineColor = getColor(R.styleable.LrcView_hignLineColor, Color.RED)
+            lrcColor = getColor(R.styleable.LrcView_lrcColor, Color.BLACK)
+            mode = getInt(R.styleable.LrcView_lrcMode, mode)
+        }
+        gPaint = Paint()
+        gPaint.isAntiAlias = true
+        gPaint.setColor(lrcColor)
+        gPaint.textSize = 36f
+        gPaint.textAlign = Paint.Align.CENTER
+        val sfontMetrics = gPaint.getFontMetrics()
+        mSTextHeight = sfontMetrics.bottom - sfontMetrics.descent - sfontMetrics.ascent
+        sPaint = Paint()
+        sPaint.isAntiAlias = true
+        sPaint.setColor(lrcColor)
+        sPaint.textSize = 40f
+        sPaint.textAlign = Paint.Align.CENTER
+
+        xformode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+        hPaint = Paint()
+        hPaint.xfermode = xformode
+        hPaint.isAntiAlias = true
+        hPaint.setColor(highLineColor)
+        hPaint.textSize = 40f
+        hPaint.textAlign = Paint.Align.CENTER
+        val fontMetrics = hPaint.getFontMetrics()
+        mHTextHeight = fontMetrics.bottom - fontMetrics.descent - fontMetrics.ascent
+        mGap = dp2px(20f)
+
     }
 
-    public LrcView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public LrcView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-
-        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.LrcView);
-        highLineColor = ta.getColor(R.styleable.LrcView_hignLineColor, Color.GREEN);
-        lrcColor = ta.getColor(R.styleable.LrcView_lrcColor, Color.RED);
-        mode = ta.getInt(R.styleable.LrcView_lrcMode, mode);
-        ta.recycle();
-        gPaint = new Paint();
-        gPaint.setAntiAlias(true);
-        gPaint.setColor(lrcColor);
-        gPaint.setTextSize(36);
-        gPaint.setTextAlign(Paint.Align.CENTER);
-        hPaint = new Paint();
-        hPaint.setAntiAlias(true);
-        hPaint.setColor(highLineColor);
-        hPaint.setTextSize(36);
-        hPaint.setTextAlign(Paint.Align.CENTER);
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
+    override fun onDraw(canvas: Canvas) {
         if (width == 0 || height == 0) {
-            width = getMeasuredWidth();
-            height = getMeasuredHeight();
+            width = measuredWidth
+            height = measuredHeight
         }
-        if (list == null || list.size() == 0) {
-            canvas.drawText("暂无歌词", width / 2, height / 2, gPaint);
-            return;
+        if (list.isEmpty()) {
+            canvas.drawText("暂无歌词", width / 2f, height / 2f, gPaint)
+            return
         }
 
-        getCurrentPosition();
+        getCurrentPosition()
 
-//        drawLrc1(canvas);
-        int currentMillis = currentPlayerMillis;
+        //        drawLrc1(canvas);
+        var currentMillis = currentPlayerMillis
         if (currentMillis < 0) {
-            if (player != null) {
-                currentMillis = player.getCurrentPosition();
-            }
+            currentMillis = player?.getCurrentPosition() ?: 0
         }
 
-        drawLrc2(canvas, currentMillis);
-        long start = list.get(currentPosition).getStart();
-        float v = (currentMillis - start) > 500 ? currentPosition * 80 : lastPosition * 80 + (currentPosition - lastPosition) * 80 * ((currentMillis - start) / 500f);
-        setScrollY((int) v);
-        if (getScrollY() == currentPosition * 80) {
-            lastPosition = currentPosition;
+        drawLrc2(canvas, currentMillis)
+        val textHeight = mHTextHeight + mGap
+        val v =currentPosition * textHeight
+        scrollBy(0, v.toInt() - scrollY)
+        if (scrollY.toFloat() == currentPosition * textHeight) {
+            lastPosition = currentPosition
         }
-        postInvalidateDelayed(100);
+        postInvalidateDelayed(100)
     }
 
-    private void drawLrc2(Canvas canvas, int currentMillis) {
+    private fun drawLrc2(canvas: Canvas, currentMillis: Int) {
+        val textHeight = mHTextHeight + mGap
         if (mode == 0) {
-            for (int i = 0; i < list.size(); i++) {
-                if (i == currentPosition) {
-                    canvas.drawText(list.get(i).getLrc(), width / 2, height / 2 + 80 * i, hPaint);
+            for ((index, item) in list.withIndex()) {
+                if (index == currentPosition) {
+                    canvas.drawText(item.lrc, width / 2f, height / 2f + textHeight * index, hPaint)
                 } else {
-                    canvas.drawText(list.get(i).getLrc(), width / 2, height / 2 + 80 * i, gPaint);
+                    canvas.drawText(item.lrc, width / 2f, height / 2f + textHeight * index, gPaint)
                 }
             }
         } else {
-            for (int i = 0; i < list.size(); i++) {
-                canvas.drawText(list.get(i).getLrc(), width / 2, height / 2 + 80 * i, gPaint);
-            }
-            String highLineLrc = list.get(currentPosition).getLrc();
-            int highLineWidth = (int) gPaint.measureText(highLineLrc);
-            int leftOffset = (width - highLineWidth) / 2;
-            LrcBean lrcBean = list.get(currentPosition);
-            long start = lrcBean.getStart();
-            long end = lrcBean.getEnd();
-            Logcat.d(">>>>highLineLrc:" + highLineLrc);
-            Logcat.d(">>>>>>start:" + start + " end:" + end+" currentMillis:"+currentMillis+" highLineWidth:"+highLineWidth);
-            if (end - start <= 0) {
-                return;
-            }
-            int i = (int) ((currentMillis - start) * 1.0f / (end - start) * highLineWidth);
-            if (i > 0) {
-                Logcat.d(">>>>>>i:" + i);
-                try {
-                    Bitmap textBitmap = Bitmap.createBitmap(i, 80, Bitmap.Config.ARGB_8888);
-                    Canvas textCanvas = new Canvas(textBitmap);
-                    textCanvas.drawText(highLineLrc, highLineWidth / 2, 80, hPaint);
-                    canvas.drawBitmap(textBitmap, leftOffset, height / 2 + 80 * (currentPosition - 1), null);
-                } catch (Throwable e) {
-                   e.printStackTrace();
+            for ((index, item) in list.withIndex()) {
+                if (index == currentPosition) {
+                    drawHighLine(canvas, currentMillis, textHeight, item)
+                } else {
+                    canvas.drawText(item.lrc, width / 2f, height / 2f + textHeight * index, gPaint)
                 }
             }
         }
     }
-
-    public void init() {
-        currentPosition = 0;
-        lastPosition = 0;
-        setScrollY(0);
-        invalidate();
+    fun drawHighLine(canvas: Canvas, currentMillis: Int, textHeight: Float, item: LrcBean) {
+        val lrcContent = item.lrc
+        val start = item.start
+        val end = item.end
+        val highLineWidth = sPaint.measureText(lrcContent).toInt()
+        val leftOffset = (width - highLineWidth) / 2f
+        val i = ((currentMillis - start) * 1.0f / (end - start) * highLineWidth)
+        val srcBitmap = createBitmap(measuredWidth, ceil(textHeight+20).roundToInt())
+        val srcCanvas = Canvas(srcBitmap)
+        srcCanvas.drawText(lrcContent,  highLineWidth / 2f, textHeight, sPaint)
+        val rectF = RectF(0f, 0f, i, textHeight+20)
+        srcCanvas.drawRect(rectF, hPaint)
+        canvas.drawBitmap(srcBitmap, leftOffset,  height / 2f + (textHeight) * (currentPosition - 1), null)
     }
 
-    private void drawLrc1(Canvas canvas) {
-        String text = list.get(currentPosition).getLrc();
-        canvas.drawText(text, width / 2, height / 2, hPaint);
-
-        for (int i = 1; i < 10; i++) {
-            int index = currentPosition - i;
-            if (index > -1) {
-                canvas.drawText(list.get(index).getLrc(), width / 2, height / 2 - 80 * i, gPaint);
-            }
-        }
-        for (int i = 1; i < 10; i++) {
-            int index = currentPosition + i;
-            if (index < list.size()) {
-                canvas.drawText(list.get(index).getLrc(), width / 2, height / 2 + 80 * i, gPaint);
-            }
-        }
-    }
-
-    private void getCurrentPosition() {
+    private fun getCurrentPosition() {
         try {
-            int currentMillis = currentPlayerMillis;
+            var currentMillis = currentPlayerMillis
             if (currentMillis < 0) {
                 if (player != null) {
-                    currentMillis = player.getCurrentPosition();
+                    currentMillis = player!!.currentPosition
                 }
             }
-            if (currentMillis < list.get(0).getStart()) {
-                currentPosition = 0;
-                return;
+            if (currentMillis < list[0].start) {
+                currentPosition = 0
+                return
             }
-            if (currentMillis > list.get(list.size() - 1).getStart()) {
-                currentPosition = list.size() - 1;
-                return;
+            if (currentMillis > list[list.size - 1].start) {
+                currentPosition = list.size - 1
+                return
             }
-            for (int i = 0; i < list.size(); i++) {
-                if (currentMillis >= list.get(i).getStart() && currentMillis < list.get(i).getEnd()) {
-                    currentPosition = i;
-                    return;
+            for (i in list.indices) {
+                if (currentMillis >= list[i].start && currentMillis < list[i].end) {
+                    currentPosition = i
+                    return
                 }
             }
-        } catch (Exception e) {
-//            e.printStackTrace();
-            postInvalidateDelayed(100);
+        } catch (e: Exception) {
+            e.printStackTrace()
+            postInvalidateDelayed(100)
+        }
+    }
+
+    companion object {
+        const val KARAOKE: Int = 1
+    }
+}
+
+data class LrcBean(var lrc: String, var start: Long = 0, var end: Long = 0){
+    companion object{
+        fun create(lrcStr: String): List<LrcBean> {
+            val list: MutableList<LrcBean> = ArrayList<LrcBean>()
+            val lrcText = lrcStr.replace("&#58;".toRegex(), ":")
+                .replace("&#10;".toRegex(), "\n")
+                .replace("&#46;".toRegex(), ".")
+                .replace("&#32;".toRegex(), " ")
+                .replace("&#45;".toRegex(), "-")
+                .replace("&#13;".toRegex(), "\r")
+                .replace("&#39;".toRegex(), "'")
+            Logcat.d(">>>>lrcText:$lrcText")
+            val split = lrcText.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+            Logcat.d(">>>>split:" + split.size)
+            Logcat.d(">>>>split:" + split.contentToString())
+            for ((index,lrc) in split.withIndex() ) {
+                //先截取时间
+                if (!lrc.contains("[")) {
+                    continue
+                }
+                if (!lrc.contains("]")) {
+                    continue
+                }
+                val time = lrc.substring(lrc.indexOf("[")+1, lrc.indexOf("]"))
+                dLog { "time:$time" }
+                val min = time.substring(0, time.indexOf(":"))
+                var millis ="0"
+                val seconds = if (time.contains(".")) {
+                    millis = time.substring(time.indexOf(".") + 1)
+                    time.substring(time.indexOf(":") + 1, time.indexOf("."))
+                }else{
+                    time.substring(time.indexOf(":") + 1)
+                }
+                val startTime =
+                    min.toLong() * 60 * 1000 + seconds.toLong() * 1000 + millis.toLong() * 10
+                var text = lrc.substring(lrc.indexOf("]") + 1)
+                if ("" == text) {
+                    text = "music"
+                }
+
+                val lrcBean = LrcBean(text, startTime, 0)
+                list.add(lrcBean)
+                if (list.size > 1) {
+                    list[list.size - 2].end = startTime
+                }
+                if (index == split.size - 1) {
+                    list[list.size - 1].end = startTime + 100000
+                }
+            }
+            Logcat.d(">>>>list:" + GsonUtils.toJson(list))
+            return list
         }
     }
 }
