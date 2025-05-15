@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
+import com.android.composedemo.compose.ItemView
 import com.android.composedemo.data.bean.ModuleBean
 import com.android.composedemo.utils.getParcelableCompat
 import com.cormor.overscroll.core.overScrollVertical

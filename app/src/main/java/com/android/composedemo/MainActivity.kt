@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import com.android.composedemo.compose.MarketListView
 import com.android.composedemo.data.viewmodel.DemoHomeViewModel
 import com.android.composedemo.ui.theme.DemoFontFamily
 import kotlinx.coroutines.CoroutineScope

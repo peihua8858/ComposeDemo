@@ -1,4 +1,4 @@
-package com.android.composedemo
+package com.android.composedemo.compose.components
 
 import android.graphics.RectF
 import androidx.annotation.FloatRange

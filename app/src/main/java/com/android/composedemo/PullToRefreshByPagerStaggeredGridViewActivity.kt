@@ -3,7 +3,6 @@ package com.android.composedemo
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -38,8 +37,8 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.android.composedemo.compose.ErrorView
 import com.android.composedemo.data.bean.AdapterBean
 import com.android.composedemo.data.bean.Data
 import com.android.composedemo.data.viewmodel.DemoHomeViewModel

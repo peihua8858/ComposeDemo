@@ -1,9 +1,10 @@
-package com.android.composedemo
+package com.android.composedemo.compose
 
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Bitmap
+import android.graphics.Rect
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -60,6 +61,9 @@ import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.android.composedemo.Constants
+import com.android.composedemo.R
+import com.android.composedemo.SecondActivity
 import com.android.composedemo.data.bean.AdapterBean
 import com.android.composedemo.data.bean.Data
 import com.android.composedemo.data.bean.ModuleBean
@@ -148,7 +152,7 @@ fun Activity.TitleItemView(module: ModuleBean) {
                         //点击more
                         val intent =
                             Intent(this@TitleItemView, SecondActivity::class.java)
-                        intent.putExtra(SecondActivity.KEY_MODULE, module)
+                        intent.putExtra(SecondActivity.Companion.KEY_MODULE, module)
                         startActivity(intent)
                     })
         }
@@ -548,7 +552,7 @@ fun AiBannerView(modifier: Modifier = Modifier, module: ModuleBean) {
 
 fun createBlurredBitmap(original: Bitmap, blurAreaHeightPx: Float): Bitmap {
     // 确保我们只处理底部区域
-    val srcRect = android.graphics.Rect(
+    val srcRect = Rect(
         0,
         (original.height - blurAreaHeightPx).roundToInt(),
         original.width,

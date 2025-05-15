@@ -3,7 +3,6 @@ package com.android.composedemo
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,14 +21,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
+import com.android.composedemo.compose.ErrorView
+import com.android.composedemo.compose.ItemView
 import com.android.composedemo.data.bean.AdapterBean
 import com.android.composedemo.data.bean.Data
 import com.android.composedemo.data.viewmodel.DemoHomeViewModel
@@ -140,11 +137,11 @@ private fun BindingListView(
             ItemView(
                 modifier = Modifier
                     .wrapContentHeight(Alignment.CenterVertically)
-                    /*.padding(
-                        start = (if (isLandScape && spanIndex > 0) mGap else if (spanIndex == 0) mMarin else mMarin / 2),
-                        bottom = mGap * 2,
-                        end = if (spanIndex == spanCount - 1) mMarin else if (isLandScape) mGap else 0.dp
-                    )*/, item = itemData
+                /*.padding(
+                    start = (if (isLandScape && spanIndex > 0) mGap else if (spanIndex == 0) mMarin else mMarin / 2),
+                    bottom = mGap * 2,
+                    end = if (spanIndex == spanCount - 1) mMarin else if (isLandScape) mGap else 0.dp
+                )*/, item = itemData
             )
         }
         composeLoadMore()

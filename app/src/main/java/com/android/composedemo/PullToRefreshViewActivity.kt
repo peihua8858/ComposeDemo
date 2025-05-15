@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.android.composedemo.compose.MarketListView
 import com.android.composedemo.data.bean.AdapterBean
 import com.android.composedemo.data.viewmodel.DemoHomeViewModel
 import com.android.composedemo.utils.isError

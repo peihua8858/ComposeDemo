@@ -23,6 +23,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.android.composedemo.compose.components.PagerTabIndicator
 import com.android.composedemo.ui.theme.DemoFontFamily
 import kotlinx.coroutines.launch
 

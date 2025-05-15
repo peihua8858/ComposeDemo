@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <debug-overrides>
+        <trust-anchors>
+            <!-- Trust user added CAs while debuggable only -->
+            <certificates src="user" />
+            <!-- Trust user added CAs while debuggable only -->
+            <certificates src="system" />
+        </trust-anchors>
+    </debug-overrides>
+    <!--允许日志系统、测试环境http访问-->
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>

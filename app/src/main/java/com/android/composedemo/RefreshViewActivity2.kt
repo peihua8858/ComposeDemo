@@ -1,11 +1,6 @@
 package com.android.composedemo
 
-import android.content.Context
 import android.os.Bundle
-import android.util.AttributeSet
-import android.util.Log
-import android.view.View
-import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.VectorConverter
@@ -15,8 +10,6 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.ScrollableState
-import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -28,7 +21,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -36,52 +28,29 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollDispatcher
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.input.pointer.consumeAllChanges
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.AbstractComposeView
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.view.NestedScrollingChild
-import androidx.core.view.NestedScrollingChild3
-import androidx.core.view.NestedScrollingChildHelper
-import androidx.core.view.NestedScrollingParent3
-import androidx.core.view.NestedScrollingParentHelper
-import androidx.core.view.ViewCompat
-import androidx.core.view.ViewCompat.TYPE_NON_TOUCH
-import androidx.core.view.ViewCompat.TYPE_TOUCH
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.android.composedemo.compose.MarketListView
 import com.android.composedemo.data.bean.AdapterBean
 import com.android.composedemo.data.viewmodel.DemoHomeViewModel
 import com.android.composedemo.utils.Logcat
 import com.android.composedemo.utils.isError
 import com.android.composedemo.utils.isStarting
 import com.android.composedemo.utils.isSuccess
-import com.android.composedemo.widgets.MultiStateView
 import com.android.composedemo.widgets.pullrefreshlayout.MyRefreshFooter
 import com.android.composedemo.widgets.pullrefreshlayout.MyRefreshHeader
-import com.android.composedemo.widgets.pullrefreshlayout.SmartSwipeRefresh
 import com.android.composedemo.widgets.pullrefreshlayout.SmartSwipeRefreshState
 import com.android.composedemo.widgets.pullrefreshlayout.SmartSwipeStateFlag
 import com.android.composedemo.widgets.pullrefreshlayout.SubComposeSmartSwipeRefresh
-import com.android.composedemo.widgets.pullrefreshlayout.rememberSmartSwipeRefreshState
-import com.android.composedemo.widgets.refreshlayout.PullRefreshLayout
-import com.android.composedemo.widgets.refreshlayout.header.ClassicLoadView
-import com.android.composedemo.widgets.refreshlayout.header.ClassicsHeader
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
-import kotlin.math.ceil
-import kotlin.math.floor
 
 class RefreshViewActivity2 : BaseActivity() {
     private val mViewModel by viewModels<DemoHomeViewModel>()

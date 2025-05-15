@@ -21,7 +21,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -44,6 +43,7 @@ import androidx.core.view.ViewCompat.TYPE_NON_TOUCH
 import androidx.core.view.ViewCompat.TYPE_TOUCH
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.android.composedemo.compose.MarketListView
 import com.android.composedemo.data.bean.AdapterBean
 import com.android.composedemo.data.viewmodel.DemoHomeViewModel
 import com.android.composedemo.utils.Logcat
@@ -56,7 +56,6 @@ import com.android.composedemo.widgets.pullrefreshlayout.MyRefreshHeader
 import com.android.composedemo.widgets.pullrefreshlayout.SmartSwipeRefresh
 import com.android.composedemo.widgets.pullrefreshlayout.SmartSwipeRefreshState
 import com.android.composedemo.widgets.pullrefreshlayout.SmartSwipeStateFlag
-import com.android.composedemo.widgets.pullrefreshlayout.rememberSmartSwipeRefreshState
 import kotlin.math.absoluteValue
 import kotlin.math.ceil
 import kotlin.math.floor

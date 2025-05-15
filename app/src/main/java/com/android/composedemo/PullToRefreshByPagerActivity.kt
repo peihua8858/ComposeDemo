@@ -2,13 +2,6 @@ package com.android.composedemo
 
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.VectorConverter
-import androidx.compose.animation.core.animateValue
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,31 +11,27 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
+import com.android.composedemo.compose.AiBannerView
+import com.android.composedemo.compose.BannerView
+import com.android.composedemo.compose.ErrorView
+import com.android.composedemo.compose.HomeItemView
+import com.android.composedemo.compose.PostBannerView
+import com.android.composedemo.compose.TitleItemView
 import com.android.composedemo.data.bean.AdapterBean
 import com.android.composedemo.data.bean.ModuleBean
 import com.android.composedemo.data.viewmodel.DemoHomeViewModel
-import com.android.composedemo.utils.Logcat
 import com.android.composedemo.utils.items
 import com.android.composedemo.utils.showToast
 import com.android.composedemo.widgets.pullrefreshlayout.PullToRefresh
 import com.android.composedemo.widgets.pullrefreshlayout.rememberPullToRefreshState
-import kotlinx.coroutines.flow.last
 
 /**
  * use [PullToRefresh]
