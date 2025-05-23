@@ -115,6 +115,7 @@ dependencies {
 //    implementation("com.github.franmontiel:PersistentCookieJar:v1.0.1")
     implementation("com.example.flutter_module:flutter_debug:1.0")
     implementation("com.google.accompanist:accompanist-permissions:0.37.2")
+    implementation("com.github.peihua8858:kotlinCommonUtils:1.1.2")
 }
 //tasks.withType(KotlinCompile::class).all {
 //    kotlinOptions {
