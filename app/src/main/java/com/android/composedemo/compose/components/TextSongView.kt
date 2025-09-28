@@ -1,4 +1,4 @@
-package com.android.composedemo.compose
+package com.android.composedemo.compose.components
 
 import android.content.Context
 import android.view.ViewGroup
@@ -12,15 +12,9 @@ import com.android.composedemo.utils.dLog
 import com.android.composedemo.widgets.lrc.DefaultLrcBuilder
 import com.android.composedemo.widgets.lrc.ILrcBuilder
 import com.android.composedemo.widgets.lrc.LrcView
-import com.android.composedemo.widgets.lrc.LrcView2
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-
-@Composable
-fun SongTextContentView(modifier: Modifier) {
-    TextSongView(modifier)
-}
 
 @Composable
 fun TextSongView(modifier: Modifier) {

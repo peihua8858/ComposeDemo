@@ -1,7 +1,8 @@
 package com.android.composedemo.data.viewmodel
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
-import androidx.lifecycle.MutableLiveData
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -64,11 +65,13 @@ class DemoHomeViewModel : ViewModel() {
     /**
      * 请求首页数据
      */
-    val modelState = MutableLiveData<ResultData<MutableList<AdapterBean<*>>>>()
+    val modelState: MutableState<ResultData<MutableList<AdapterBean<*>>>> =
+        mutableStateOf(ResultData.Initialize())
+
     /**
      * 请求首页数据
      */
-    val modelState1 = MutableLiveData<ResultData<MutableList<AdapterBean<*>>>>()
+    val modelState1 = mutableStateOf<ResultData<MutableList<AdapterBean<*>>>>(ResultData.Initialize())
     private val fileNames = mutableListOf("render_data.json", "render_data2.json")
 
     suspend fun requestPagingData(pageSize: Int): MutableList<AdapterBean<*>> {
@@ -137,6 +140,7 @@ class DemoHomeViewModel : ViewModel() {
             requestPagingData(0)
         }
     }
+
     /**
      * 请求首页数据
      */
@@ -221,7 +225,7 @@ class DemoHomeViewModel : ViewModel() {
 
 class HomePagingSource(
     private val viewModel: DemoHomeViewModel,
-    private val config: PagingConfig
+    private val config: PagingConfig,
 ) :
     PagingSource<Int, AdapterBean<*>>() {
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, AdapterBean<*>> {
@@ -256,7 +260,7 @@ class HomePagingSource(
 
 class GridViewPagingSource(
     private val viewModel: DemoHomeViewModel,
-    private val config: PagingConfig
+    private val config: PagingConfig,
 ) :
     PagingSource<Int, AdapterBean<*>>() {
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, AdapterBean<*>> {

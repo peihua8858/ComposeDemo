@@ -5,11 +5,16 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.android.composedemo.GitHub.GithubContentView
 import com.android.composedemo.GitHub.viewmodel.GithubViewModel
 import com.android.composedemo.compose.CustomViewScreen
+import com.android.composedemo.compose.GithubScreen
 import com.android.composedemo.compose.MarketListView
-import com.android.composedemo.compose.SongTextContentView
+import com.android.composedemo.compose.Paging3Screen
+import com.android.composedemo.compose.Paging3GridScreen
+import com.android.composedemo.compose.Paging3StaggeredGridScreen
+import com.android.composedemo.compose.RefreshViewScreen
+import com.android.composedemo.compose.SmartSwipeRefreshScreen
+import com.android.composedemo.compose.SongTextScreen
 import com.android.composedemo.data.viewmodel.DemoHomeViewModel
 
 class TabPagerViewActivity : TabLayoutActivity<TabModel>() {
@@ -28,22 +33,22 @@ class TabPagerViewActivity : TabLayoutActivity<TabModel>() {
             RefreshViewScreen(modifier, mViewModel)
         })
         mTabs.add(TabModel("Smart Refresh") { modifier, state, index ->
-            SmartSwipeRefreshContentView(modifier, mViewModel)
+            SmartSwipeRefreshScreen(modifier, mViewModel)
         })
         mTabs.add(TabModel("Paging3 Grid") { modifier, state, index ->
-            Paging3GridContentView(modifier, mViewModel)
+            Paging3GridScreen(modifier, mViewModel)
         })
         mTabs.add(TabModel("Paging3 Staggered Grid") { modifier, state, index ->
-            Paging3StaggeredGridContentView(modifier, mViewModel)
+            Paging3StaggeredGridScreen(modifier, mViewModel)
         })
         mTabs.add(TabModel("Paging3 List") { modifier, state, index ->
-            Paging3ContentView(modifier, mViewModel)
+            Paging3Screen(modifier, mViewModel)
         })
         mTabs.add(TabModel("Github") { modifier, state, index ->
-            GithubContentView(modifier, mGithubViewModel)
+            GithubScreen(modifier, mGithubViewModel)
         })
         mTabs.add(TabModel("Song lrc text") { modifier, state, index ->
-            SongTextContentView(modifier)
+            SongTextScreen(modifier)
         })
         this.mTabs.addAll(mTabs)
         mViewModel.requestHomeData2(1)
@@ -52,16 +57,6 @@ class TabPagerViewActivity : TabLayoutActivity<TabModel>() {
     @Composable
     override fun PageContent(modifier: Modifier, pagerState: PagerState, index: Int) {
         mTabs[index].page(modifier, pagerState, index)
-//        when (index) {
-//            7 -> MarketListView(modifier, mViewModel.modelState3)
-//            1 -> RefreshViewScreen(modifier, mViewModel)
-//            2 -> SmartSwipeRefreshContentView(modifier, mViewModel)
-//            3 -> Paging3GridContentView(modifier, mViewModel)
-//            4 -> Paging3StaggeredGridContentView(modifier, mViewModel)
-//            5 -> Paging3ContentView(modifier, mViewModel)
-//            7 -> GithubContentView(modifier, mGithubViewModel)
-//            8 -> SongTextContentView(modifier)
-//        }
     }
 }
 

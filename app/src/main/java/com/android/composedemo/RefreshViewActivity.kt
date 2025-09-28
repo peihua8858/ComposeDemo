@@ -184,28 +184,7 @@ class RefreshViewActivity : BaseActivity() {
     @ExperimentalMaterial3Api
     override fun ContentView(modifier: Modifier) {
         val refreshState  by remember { mutableStateOf(SmartSwipeRefreshState()) }
-        mViewModel.modelState.observe(this) {
-            if (it.isStarting()) {
-                if (!refreshState.isLoading()) {
-                    mLoading.value = true
-                }
-            } else if (it.isSuccess()) {
-                mLoading.value = false
-                if (refreshState.refreshFlag == SmartSwipeStateFlag.REFRESHING) {
-                    modelState3.clear()
-                }
-                modelState3.addAll(it.data)
-                refreshState.refreshFlag = SmartSwipeStateFlag.SUCCESS
-                refreshState.loadMoreFlag = SmartSwipeStateFlag.SUCCESS
-            } else if (it.isError()) {
-                if (refreshState.refreshFlag == SmartSwipeStateFlag.REFRESHING) {
-                    modelState3.clear()
-                }
-                refreshState.refreshFlag = SmartSwipeStateFlag.ERROR
-                refreshState.loadMoreFlag = SmartSwipeStateFlag.ERROR
-                mLoading.value = false
-            }
-        }
+       val result = mViewModel.modelState.value
         // 使用 LocalConfiguration 获取当前配置
         SmartSwipeRefresh(
             state = refreshState,
@@ -226,41 +205,30 @@ class RefreshViewActivity : BaseActivity() {
             },
             modifier = modifier
         ) {
-            if (mLoading.value) {
-                LoadingView(Modifier)
-            } else {
+            if(result.isStarting()){
+                com.android.composedemo.compose.components.LoadingView(Modifier)
+                mViewModel.requestHomeData()
+            }else if (result.isStarting()) {
+                if (!refreshState.isLoading()) {
+                    mLoading.value = true
+                }
+            } else if (result.isSuccess()) {
+                mLoading.value = false
+                if (refreshState.refreshFlag == SmartSwipeStateFlag.REFRESHING) {
+                    modelState3.clear()
+                }
+                modelState3.addAll(result.data)
                 BindingListView(Modifier)
+                refreshState.refreshFlag = SmartSwipeStateFlag.SUCCESS
+                refreshState.loadMoreFlag = SmartSwipeStateFlag.SUCCESS
+            } else if (result.isError()) {
+                if (refreshState.refreshFlag == SmartSwipeStateFlag.REFRESHING) {
+                    modelState3.clear()
+                }
+                refreshState.refreshFlag = SmartSwipeStateFlag.ERROR
+                refreshState.loadMoreFlag = SmartSwipeStateFlag.ERROR
+                mLoading.value = false
             }
-        }
-    }
-
-    @Composable
-    fun LoadingView(modifier: Modifier) {
-        Box(modifier = modifier.fillMaxSize()) {
-            val painter = rememberAsyncImagePainter(
-                ImageRequest.Builder(LocalContext.current)
-                    .data(data = R.mipmap.ic_loading1)
-                    .build()
-            )
-            val transition = rememberInfiniteTransition(label = "")
-            val progress by transition.animateValue(
-                0f,
-                1f,
-                Float.VectorConverter,
-                infiniteRepeatable(
-                    animation = tween(
-                        durationMillis = 1332,
-                        easing = LinearEasing
-                    )
-                ), label = ""
-            )
-            Image(
-                painter = painter,
-                contentDescription = "",
-                modifier = modifier
-                    .align(Alignment.Center)
-                    .rotate(progress * 360),
-            )
         }
     }
 

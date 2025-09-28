@@ -1,6 +1,5 @@
 package com.android.composedemo.compose
 
-import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Bitmap
@@ -80,7 +79,7 @@ import kotlin.math.roundToInt
 
 
 @Composable
-fun Activity.MarketListView(
+fun MarketListView(
     modifier: Modifier = Modifier,
     modelState3: MutableList<AdapterBean<*>>
 ) {
@@ -116,8 +115,9 @@ fun Activity.MarketListView(
  * 标题栏
  */
 @Composable
-fun Activity.TitleItemView(module: ModuleBean) {
+fun TitleItemView(module: ModuleBean) {
     val configuration = LocalConfiguration.current
+    val context =LocalContext.current
     val isLandScape =
         configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     Row(
@@ -151,9 +151,9 @@ fun Activity.TitleItemView(module: ModuleBean) {
                     .clickable {
                         //点击more
                         val intent =
-                            Intent(this@TitleItemView, SecondActivity::class.java)
+                            Intent(context, SecondActivity::class.java)
                         intent.putExtra(SecondActivity.Companion.KEY_MODULE, module)
-                        startActivity(intent)
+                        context.startActivity(intent)
                     })
         }
     }

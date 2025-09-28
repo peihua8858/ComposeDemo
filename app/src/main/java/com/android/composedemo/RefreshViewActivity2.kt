@@ -54,7 +54,6 @@ import kotlin.math.absoluteValue
 
 class RefreshViewActivity2 : BaseActivity() {
     private val mViewModel by viewModels<DemoHomeViewModel>()
-    private val mLoading = mutableStateOf(true)
     private val modelState3 = mutableStateListOf<AdapterBean<*>>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,28 +65,7 @@ class RefreshViewActivity2 : BaseActivity() {
     @ExperimentalMaterial3Api
     override fun ContentView(modifier: Modifier) {
         val refreshState by remember { mutableStateOf(SmartSwipeRefreshState()) }
-        mViewModel.modelState.observe(this) {
-            if (it.isStarting()) {
-                if (!refreshState.isLoading()) {
-                    mLoading.value = true
-                }
-            } else if (it.isSuccess()) {
-                mLoading.value = false
-                if (refreshState.refreshFlag == SmartSwipeStateFlag.REFRESHING) {
-                    modelState3.clear()
-                }
-                modelState3.addAll(it.data)
-                refreshState.refreshFlag = SmartSwipeStateFlag.SUCCESS
-                refreshState.loadMoreFlag = SmartSwipeStateFlag.SUCCESS
-            } else if (it.isError()) {
-                if (refreshState.refreshFlag == SmartSwipeStateFlag.REFRESHING) {
-                    modelState3.clear()
-                }
-                refreshState.refreshFlag = SmartSwipeStateFlag.ERROR
-                refreshState.loadMoreFlag = SmartSwipeStateFlag.ERROR
-                mLoading.value = false
-            }
-        }
+        val result = mViewModel.modelState.value
         // 使用 LocalConfiguration 获取当前配置
 //        if (mLoading.value) {
 //            LoadingView(Modifier)
@@ -123,7 +101,7 @@ class RefreshViewActivity2 : BaseActivity() {
             },
             onLoadMore = {
                 refreshState.loadMoreFlag = SmartSwipeStateFlag.REFRESHING
-                Logcat.d("onLoadMore>>>>>>loadMoreFlag:"+refreshState.loadMoreFlag + ">>>>>>refreshFlag:" + refreshState.refreshFlag)
+                Logcat.d("onLoadMore>>>>>>loadMoreFlag:" + refreshState.loadMoreFlag + ">>>>>>refreshFlag:" + refreshState.refreshFlag)
                 mViewModel.requestHomeData()
             },
             headerIndicator = {
@@ -134,10 +112,24 @@ class RefreshViewActivity2 : BaseActivity() {
             },
             modifier = modifier
         ) {
-            if (mLoading.value) {
-                LoadingView(Modifier)
-            } else {
+            if (result.isStarting()) {
+                if (!refreshState.isLoading()) {
+                    LoadingView(Modifier)
+                }
+            } else if (result.isSuccess()) {
+                if (refreshState.refreshFlag == SmartSwipeStateFlag.REFRESHING) {
+                    modelState3.clear()
+                }
+                modelState3.addAll(result.data)
                 BindingListView(Modifier)
+                refreshState.refreshFlag = SmartSwipeStateFlag.SUCCESS
+                refreshState.loadMoreFlag = SmartSwipeStateFlag.SUCCESS
+            } else if (result.isError()) {
+                if (refreshState.refreshFlag == SmartSwipeStateFlag.REFRESHING) {
+                    modelState3.clear()
+                }
+                refreshState.refreshFlag = SmartSwipeStateFlag.ERROR
+                refreshState.loadMoreFlag = SmartSwipeStateFlag.ERROR
             }
         }
     }
@@ -176,12 +168,12 @@ class RefreshViewActivity2 : BaseActivity() {
     private fun BindingListView(modifier: Modifier) {
         MarketListView(
             modifier
-                .fillMaxSize()
-                , modelState3
+                .fillMaxSize(), modelState3
         )
     }
 
 }
+
 @Composable
 fun SmartSwipeRefresh1(
     modifier: Modifier = Modifier,
@@ -191,7 +183,7 @@ fun SmartSwipeRefresh1(
     headerIndicator: @Composable (() -> Unit)? = { MyRefreshHeader(flag = state.refreshFlag) },
     footerIndicator: @Composable (() -> Unit)? = { MyRefreshFooter(flag = state.loadMoreFlag) },
     contentScrollState: ScrollableState? = null,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val connection = remember(coroutineScope) {
@@ -204,11 +196,13 @@ fun SmartSwipeRefresh1(
                 state.animateIsOver = false
                 onRefresh?.invoke() // Trigger refresh callback
             }
+
             SmartSwipeStateFlag.SUCCESS, SmartSwipeStateFlag.ERROR -> {
                 delay(500)
                 state.animateOffsetTo(0f) // Reset position after refresh
                 state.refreshFlag = SmartSwipeStateFlag.IDLE // Reset refresh flag
             }
+
             else -> {}
         }
     }
@@ -219,11 +213,13 @@ fun SmartSwipeRefresh1(
                 state.animateIsOver = false
                 onLoadMore?.invoke() // Trigger load more callback
             }
+
             SmartSwipeStateFlag.SUCCESS, SmartSwipeStateFlag.ERROR -> {
                 delay(500)
                 state.animateOffsetTo(0f) // Reset position after loading more
                 state.loadMoreFlag = SmartSwipeStateFlag.IDLE // Reset load more flag
             }
+
             else -> {}
         }
     }
@@ -247,20 +243,22 @@ fun SmartSwipeRefresh1(
                     content()
                 }
                 headerIndicator?.let {
-                    Box(modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .graphicsLayer {
-                            translationY = -header.toFloat() + state.indicatorOffset
-                        }) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .graphicsLayer {
+                                translationY = -header.toFloat() + state.indicatorOffset
+                            }) {
                         headerIndicator()
                     }
                 }
                 footerIndicator?.let {
-                    Box(modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .graphicsLayer {
-                            translationY = footer.toFloat() + state.indicatorOffset
-                        }) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .graphicsLayer {
+                                translationY = footer.toFloat() + state.indicatorOffset
+                            }) {
                         footerIndicator()
                     }
                 }
@@ -271,7 +269,7 @@ fun SmartSwipeRefresh1(
 
 private class SmartSwipeRefreshNestedScrollConnection(
     val state: SmartSwipeRefreshState,
-    private val coroutineScope: CoroutineScope
+    private val coroutineScope: CoroutineScope,
 ) : NestedScrollConnection {
     override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
         return when {
@@ -281,10 +279,12 @@ private class SmartSwipeRefreshNestedScrollConnection(
                 val canConsumed = (available.y * state.stickinessLevel).coerceAtLeast(0 - state.indicatorOffset)
                 scroll(canConsumed)
             }
+
             available.y > 0 && state.indicatorOffset < 0 -> {
                 val canConsumed = (available.y * state.stickinessLevel).coerceAtMost(0 - state.indicatorOffset)
                 scroll(canConsumed)
             }
+
             else -> Offset.Zero
         }
     }
@@ -385,7 +385,7 @@ private class SmartSwipeRefreshNestedScrollConnection(
 
 
 private class SmartSwipeRefreshNestedScrollConnection2(
-    val state: SmartSwipeRefreshState, private val coroutineScope: CoroutineScope
+    val state: SmartSwipeRefreshState, private val coroutineScope: CoroutineScope,
 ) : NestedScrollConnection {
     override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
         return when {
@@ -411,7 +411,7 @@ private class SmartSwipeRefreshNestedScrollConnection2(
     override fun onPostScroll(
         consumed: Offset,
         available: Offset,
-        source: NestedScrollSource
+        source: NestedScrollSource,
     ): Offset {
         return when {
             state.isLoading() -> Offset.Zero
