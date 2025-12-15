@@ -211,4 +211,20 @@
         <attr name="hignLineColor" format="color|reference"/>
         <attr name="lrcColor" format="color|reference"/>
     </declare-styleable>
+
+    <declare-styleable name="FadeEdgeTabLayout">
+        <!-- 渐变宽度 -->
+        <attr name="fadeWidth" format="dimension" />
+        <!-- 渐变起始颜色 -->
+        <attr name="fadeStartColor" format="color" />
+        <!-- 渐变结束颜色 -->
+        <attr name="fadeEndColor" format="color" />
+        <!-- 渐变方向-->
+        <attr name="fadeDirection">
+            <flag name="left" value="1" />
+            <flag name="right" value="2" />
+            <flag name="top" value="4" />
+            <flag name="bottom" value="8" />
+        </attr>
+    </declare-styleable>
 </resources>
