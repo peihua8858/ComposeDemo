@@ -3,9 +3,7 @@ package com.android.composedemo.widgets
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import com.alibaba.genie.studycenter.geniebaselib.view.indicator.TabLayout
 import androidx.core.graphics.withTranslation
-import com.alibaba.genie.studycenter.content.R
 
 /**
  * 带淡入淡出遮罩的 TabLayout
