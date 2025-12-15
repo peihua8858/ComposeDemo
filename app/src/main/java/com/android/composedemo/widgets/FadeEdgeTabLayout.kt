@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import androidx.core.graphics.withTranslation
+import com.android.composedemo.R
+import com.google.android.material.tabs.TabLayout
 
 /**
  * 带淡入淡出遮罩的 TabLayout
