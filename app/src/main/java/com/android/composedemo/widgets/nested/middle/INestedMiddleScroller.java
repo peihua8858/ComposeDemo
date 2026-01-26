@@ -2,7 +2,7 @@ package com.android.composedemo.widgets.nested.middle;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.peihua8858.selector.picker.widget.nested.ChildRecyclerView;
+import com.android.composedemo.widgets.nested.ChildRecyclerView;
 
 
 public interface INestedMiddleScroller {

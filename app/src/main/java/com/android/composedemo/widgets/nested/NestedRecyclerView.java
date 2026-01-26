@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.peihua8858.selector.picker.widget.nested.help.FlingHelper;
+import com.android.composedemo.widgets.nested.help.FlingHelper;
 
 
 /**

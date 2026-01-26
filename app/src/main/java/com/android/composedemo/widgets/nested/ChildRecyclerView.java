@@ -6,7 +6,7 @@ import android.util.AttributeSet;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.peihua8858.selector.picker.widget.nested.middle.INestedMiddleScroller;
+import com.android.composedemo.widgets.nested.middle.INestedMiddleScroller;
 
 
 /**
