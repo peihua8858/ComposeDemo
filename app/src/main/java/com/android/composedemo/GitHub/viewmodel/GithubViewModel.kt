@@ -48,6 +48,7 @@ class GithubViewModel(
             .filterIsInstance<UiAction.Search>()
             .distinctUntilChanged()
             .flowOn(Dispatchers.IO)
+            //onStart作用是初始化发送请求默认数据，如果不加onStart，则不会发送请求，需要手动触发请求
             .onStart { emit(UiAction.Search(query = initialQuery)) }
         val scrollAction = actionStateFlow
             .filterIsInstance<UiAction.Scroll>()
