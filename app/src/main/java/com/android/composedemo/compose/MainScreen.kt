@@ -25,6 +25,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -74,6 +75,8 @@ import com.android.composedemo.utils.jumpTarget
 import com.android.composedemo.utils.loadCircleAvatar
 import com.android.composedemo.utils.subListToLines
 import com.android.composedemo.widgets.CircleImageView
+import drawHorizontalScrollbar
+import drawVerticalScrollbar
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -83,7 +86,10 @@ fun MarketListView(
     modifier: Modifier = Modifier,
     modelState3: MutableList<AdapterBean<*>>
 ) {
-    LazyColumn(modifier = modifier.fillMaxSize()) {
+    val state = rememberLazyListState()
+    LazyColumn(
+        state= state,
+        modifier = modifier.fillMaxSize().drawVerticalScrollbar(state)) {
         items(modelState3.toMutableList()) { message ->
             val itemData = message.data as ModuleBean
             when (message.itemType) {
